@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -73,19 +73,19 @@
                     <div id="pilih-dompet-container">
                         <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest ml-1">Pilih e-Wallet</label>
                         <div class="grid grid-cols-2 gap-3 w-full">
-                            <div onclick="pilihEWallet('SP', 'ShopeePay')" id="card-SPP" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                            <div onclick="pilihEWallet('SPP', 'ShopeePay')" id="card-SPP" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
                                 <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">SPP</div>
                                 <span class="font-bold text-xs uppercase tracking-wider text-white">ShopeePay</span>
                             </div>
-                            <div onclick="pilihEWallet('GP', 'Gopay')" id="card-GPY" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                            <div onclick="pilihEWallet('GPY', 'Gopay')" id="card-GPY" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
                                 <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">GPY</div>
                                 <span class="font-bold text-xs uppercase tracking-wider text-white">Gopay</span>
                             </div>
-                            <div onclick="pilihEWallet('DN', 'DANA')" id="card-DANA" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                            <div onclick="pilihEWallet('DANA', 'DANA')" id="card-DANA" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
                                 <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">DANA</div>
                                 <span class="font-bold text-xs uppercase tracking-wider text-white">DANA</span>
                             </div>
-                            <div onclick="pilihEWallet('OV', 'OVO')" id="card-OVO" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                            <div onclick="pilihEWallet('OVO', 'OVO')" id="card-OVO" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
                                 <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">OVO</div>
                                 <span class="font-bold text-xs uppercase tracking-wider text-white">OVO</span>
                             </div>
@@ -114,7 +114,7 @@
                             <div id="container-nominal" class="grid grid-cols-1 gap-2.5 max-h-60 overflow-y-auto pr-1"></div>
                         </div>
                         <button onclick="kirimTopUp()" id="btn-submit-topup" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95">
-                            KIRIM TOP UP OTOMATIS
+                            KIRIM TOP UP
                         </button>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                 <h2 class="text-white font-black text-2xl mb-3 tracking-wide">TOP UP COD BERHASIL!</h2>
                 <div class="bg-slate-800 p-4 rounded-xl mb-6 border border-slate-700">
                     <p class="text-slate-300 text-sm font-medium leading-relaxed">
-                        Pesananmu sudah masuk ke sistem pusat. Siapkan uang kes karena admin sedang menuju ke lokasi <span class="text-yellow-400 font-bold italic">jikot dowet</span>.
+                        Sediakan uang kes untuk pembayaran karena admin sedang menuju ke lokasi <span class="text-yellow-400 font-bold italic">jikot dowet</span>.
                     </p>
                 </div>
                 <button onclick="tutupModalSuccessTopup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-4 rounded-xl shadow-[0_4px_20px_rgba(37,99,235,0.4)] active:scale-95 transition tracking-wider text-sm uppercase">
@@ -647,7 +647,7 @@
             }
         }
 
-        // ================= LOGIKA TOP UP E-WALLET (FULL OTOMATIS) =================
+        // ================= LOGIKA TOP UP E-WALLET =================
         function pilihEWallet(idCode, providerName) {
             providerTerpilih = providerName;
             
@@ -668,6 +668,7 @@
             document.getElementById('nama_pelanggan_topup').focus();
         }
 
+        // Fungsi baru untuk mengembalikan tampilan ke pilihan e-wallet
         function gantiEWallet() {
             document.getElementById('form-input-dinamis').classList.add('hidden');
             document.getElementById('pilih-dompet-container').classList.remove('hidden');
@@ -679,17 +680,11 @@
             const container = document.getElementById('container-nominal');
             container.innerHTML = '';
             let daftarNominal = [];
-            
-            // Mulai dari 5rb aja karena biasanya PPOB gak ada 1rb
-            for (let i = 5000; i <= 10000; i += 1000) { daftarNominal.push({ nominal: i, harga: i + 2000 }); }
+            for (let i = 1000; i <= 10000; i += 1000) { daftarNominal.push({ nominal: i, harga: i + 2000 }); }
             for (let i = 15000; i <= 100000; i += 5000) { daftarNominal.push({ nominal: i, harga: i + 5000 }); }
 
             daftarNominal.forEach(item => {
-                // Logika pembentukan SKU (Misal idCode DN, nominal 5000 -> DN5)
-                let sku = `${idCode}${item.nominal / 1000}`;
-                // Antisipasi Gopay 5000 yang kodenya beda sendiri (GP5000)
-                if (idCode === 'GP' && item.nominal === 5000) sku = 'GP5000';
-
+                const sku = `${idCode}${item.nominal / 1000}`;
                 const namaProduk = `${providerName} ${item.nominal.toLocaleString('id-ID')}`;
                 container.innerHTML += `
                     <div onclick="setNominalAktif('${sku}', '${namaProduk}', ${item.harga}, this)" 
@@ -761,72 +756,51 @@
             if (!skuCodeTerpilih) return tampilkanNotifikasi("Pilih nominal saldonya dulu Mas!", "error");
 
             const btn = document.getElementById('btn-submit-topup');
-            btn.innerText = "MEMPROSES OTOMATIS..."; btn.disabled = true;
+            btn.innerText = "MEMPROSES..."; btn.disabled = true;
 
             try {
-                // 1. TEMBAK API VERCEL (JALUR BELAKANG KE TERMUX)
-                const responseAPI = await fetch('/api/topup', { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ noHp: noHp, idLayanan: skuCodeTerpilih })
-                });
+                const { data, error } = await clientDB.from('pesanan_pulsa').insert([{
+                    nama_produk: namaProdukTerpilih, sku_code: skuCodeTerpilih, nomor_tujuan: noHp, harga_jual: hargaJualTerpilih, status: 'pending'
+                }]).select();
+
+                if (error || !data) throw error;
+
+                // Tampilkan Modal Modern Bukannya Notifikasi Toast Biasa
+                document.getElementById('modal-success-topup').classList.remove('hidden');
+
+                let currentSavedIds = JSON.parse(localStorage.getItem('my_basecamp_topup_ids')) || [];
+                currentSavedIds.unshift(data[0].id); 
+                localStorage.setItem('my_basecamp_topup_ids', JSON.stringify(currentSavedIds));
+
+                loadRiwayatLive();
+
+                const pesanTele = `🔔 *ADA ANTREAN TOP UP MASUK* 🔔\n\n👤 *Nama:* ${namaPelanggan}\n🎯 *No Tujuan:* ${noHp}\n📦 *Produk:* ${namaProdukTerpilih}\n🆔 *SKU Code:* ${skuCodeTerpilih}\n💵 *Harga Jual:* Rp ${hargaJualTerpilih.toLocaleString('id-ID')}\n⚡ *Status:* PENDING\n\n_Harap buka adminpulsa.html untuk memproses_`;
                 
-                const dataAPI = await responseAPI.json();
+                fetch(`https://api.telegram.org/bot${TELE_TOKEN_TOPUP}/sendMessage?chat_id=${TELE_ID_TOPUP}&text=${encodeURIComponent(pesanTele)}&parse_mode=Markdown`, { mode: 'no-cors' });
 
-                // 2. CEK BALASAN SERVER
-                if (dataAPI.status === true) {
-                    
-                    // A. TRANSAKSI SUKSES: SIMPAN KE SUPABASE (Status Langsung Success)
-                    const { data, error } = await clientDB.from('pesanan_pulsa').insert([{
-                        nama_produk: namaProdukTerpilih, sku_code: skuCodeTerpilih, nomor_tujuan: noHp, harga_jual: hargaJualTerpilih, status: 'success'
-                    }]).select();
-
-                    if (data && !error) {
-                        let currentSavedIds = JSON.parse(localStorage.getItem('my_basecamp_topup_ids')) || [];
-                        currentSavedIds.unshift(data[0].id); 
-                        localStorage.setItem('my_basecamp_topup_ids', JSON.stringify(currentSavedIds));
-                        loadRiwayatLive();
-                    }
-
-                    // B. KIRIM NOTIFIKASI TELEGRAM (GAK DIHAPUS SESUAI REQUEST)
-                    const pesanTele = `🔔 *TOP UP OTOMATIS BERHASIL* 🔔\n\n👤 *Nama:* ${namaPelanggan}\n🎯 *No Tujuan:* ${noHp}\n📦 *Produk:* ${namaProdukTerpilih}\n🆔 *SKU Code:* ${skuCodeTerpilih}\n💵 *Harga Jual:* Rp ${hargaJualTerpilih.toLocaleString('id-ID')}\n⚡ *Status:* SUCCESS / SUDAH MASUK`;
-                    fetch(`https://api.telegram.org/bot${TELE_TOKEN_TOPUP}/sendMessage?chat_id=${TELE_ID_TOPUP}&text=${encodeURIComponent(pesanTele)}&parse_mode=Markdown`, { mode: 'no-cors' });
-
-                    // C. MUNCULIN MODAL SUKSES
-                    document.getElementById('modal-success-topup').classList.remove('hidden');
-
-                    // D. RESET FORM
-                    document.getElementById('nama_pelanggan_topup').value = '';
-                    document.getElementById('nomor_hp').value = '';
-                    skuCodeTerpilih = ''; 
-                    gantiEWallet();
-
-                } else {
-                    // JIKA TRANSAKSI GAGAL DI SERVER
-                    const pesanError = dataAPI.data && dataAPI.data.pesan ? dataAPI.data.pesan.toLowerCase() : (dataAPI.pesan || "").toLowerCase();
-                    
-                    // ANTI-MALU SYSTEM: Kalau errornya karena saldo kurang, tutup webnya!
-                    if (pesanError.includes("saldo") || pesanError.includes("mencukupi")) {
-                        document.getElementById('modal-toko-tutup').classList.remove('hidden');
-                    } else {
-                        // Kalau error lain (misal nomor salah), tetep munculin alert wajar
-                        tampilkanNotifikasi("Gagal: " + (dataAPI.data?.pesan || dataAPI.pesan || "Terjadi kesalahan."), "error");
-                    }
-                }
+                // Reset Form
+                document.getElementById('nama_pelanggan_topup').value = '';
+                document.getElementById('nomor_hp').value = '';
+                skuCodeTerpilih = ''; 
+                
+                // Kembalikan ke tampilan pemilihan e-wallet untuk transaksi selanjutnya
+                gantiEWallet();
 
             } catch (err) { 
-                tampilkanNotifikasi("Gagal menghubungi server Kasir!", "error"); 
-                console.error(err);
+                tampilkanNotifikasi("Gagal simpan database!", "error"); 
             } 
             finally { 
-                btn.innerText = "KIRIM TOP UP OTOMATIS"; btn.disabled = false; 
+                btn.innerText = "KIRIM TOP UP"; btn.disabled = false; 
             }
+
         }
 
         // INIT LOAD
         updateTampilanKeranjang(); 
         ambilDataMenu();
-        cekStatusWarungDB(); 
+        cekStatusWarungDB(); // Mengambil status buka/tutup warung saat halaman dimuat
     </script>
+
+
 </body>
 </html>
