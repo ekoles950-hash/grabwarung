@@ -11,12 +11,29 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes jalan-maju { 0% { transform: translateX(-10px) scaleX(-1); } 50% { transform: translateX(10px) scaleX(-1); } 100% { transform: translateX(-10px) scaleX(-1); } }
+        
+        /* Animasi Tracking */
+        @keyframes jalan-maju {
+            0% { transform: translateX(-10px) scaleX(-1); }
+            50% { transform: translateX(10px) scaleX(-1); }
+            100% { transform: translateX(-10px) scaleX(-1); }
+        }
         .animasi-jalan-maju { animation: jalan-maju 1.5s infinite ease-in-out; display: inline-block; }
-        @keyframes lompat-jalan { 0%, 100% { transform: translateY(0) scaleX(-1); } 50% { transform: translateY(-8px) scaleX(-1); } }
+
+        @keyframes lompat-jalan {
+            0%, 100% { transform: translateY(0) scaleX(-1); }
+            50% { transform: translateY(-8px) scaleX(-1); }
+        }
         .animasi-kurir-jalan { animation: lompat-jalan 0.6s infinite; }
         .kurir-diam { transform: scaleX(-1); }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* Animasi Pop Up */
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Style Khusus Menu Top Up */
         .input-dark { background-color: #1E293B; border: 1px solid #334155; color: white; transition: 0.3s; }
         .input-dark:focus { border-color: #3B82F6; outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         .wallet-card { background: #1E293B; border: 2px solid #334155; cursor: pointer; transition: 0.3s; width: 100%; }
@@ -32,19 +49,163 @@
     </div>
 
     <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg overflow-hidden border border-stone-200 relative">
+        
         <div class="bg-[#292524] text-amber-50 p-4 sticky top-0 z-10 shadow-md border-b-4 border-[#d97706] relative" id="header-utama">
             <h1 class="text-xl font-extrabold text-center tracking-wide text-[#f59e0b] leading-snug">☕PINGIN NGOPI KARO UDUT TAPI MAGER WARUNG KOPI SIAP ANTAR</h1>
             <p class="text-center text-sm text-stone-200 mt-1"> <span class="animasi-jalan-maju">🚶‍♀️</span></p>
             <button onclick="bukaModalPin()" class="absolute right-4 top-1/2 -translate-y-1/2 text-xl opacity-60 hover:opacity-100 transition duration-300">⚙️</button>
         </div>
-
+                   <a href="/download.html" class="bg-white text-blue-700 px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg active:scale-95 transition">
+            INSTAL APLIKASI👈📲
+        </a>
         <div class="p-4 bg-stone-50 min-h-screen" id="halaman-beranda">
             <h2 class="text-lg font-bold text-stone-800 mb-3 sticky top-[92px] bg-stone-50 z-10 pt-2 pb-1">Daftar Menu</h2>
             <div id="kategori-container" class="flex gap-2 overflow-x-auto hide-scroll mb-4 pb-2 border-b-2 border-stone-200 sticky top-[132px] bg-stone-50 z-10"></div>
             <div id="ruang-menu" class="grid grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- Navigasi Bawah -->
+        <div class="bg-[#0F172A] min-h-screen flex-col items-center p-4 pt-8 pb-24 hidden" id="halaman-topup">
+            <div class="w-full bg-[#1E293B] p-6 rounded-[2.5rem] shadow-2xl border border-slate-800 mb-6">
+                <div class="text-center mb-6">
+                    <h1 class="text-3xl font-extrabold italic text-blue-500 tracking-tighter">TOP UP <span class="text-white">DELIVERY (COD)</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">MALES KE ALFAMART? WARUNGKOPI siap isi saldo anda</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div id="pilih-dompet-container">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest ml-1">Pilih e-Wallet</label>
+                        <div class="grid grid-cols-2 gap-3 w-full">
+                            <div onclick="pilihEWallet('SPP', 'ShopeePay')" id="card-SPP" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">SPP</div>
+                                <span class="font-bold text-xs uppercase tracking-wider text-white">ShopeePay</span>
+                            </div>
+                            <div onclick="pilihEWallet('GPY', 'Gopay')" id="card-GPY" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                                <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">GPY</div>
+                                <span class="font-bold text-xs uppercase tracking-wider text-white">Gopay</span>
+                            </div>
+                            <div onclick="pilihEWallet('DANA', 'DANA')" id="card-DANA" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">DANA</div>
+                                <span class="font-bold text-xs uppercase tracking-wider text-white">DANA</span>
+                            </div>
+                            <div onclick="pilihEWallet('OVO', 'OVO')" id="card-OVO" class="wallet-card p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+                                <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center font-black text-white text-xs shadow-md">OVO</div>
+                                <span class="font-bold text-xs uppercase tracking-wider text-white">OVO</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="form-input-dinamis" class="hidden space-y-5">
+                        <div class="flex justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700 mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-black shadow-inner" id="ikon-dompet-terpilih">💳</div>
+                                <span id="label-dompet-terpilih" class="font-black text-white text-sm uppercase tracking-wider">E-WALLET</span>
+                            </div>
+                            <button onclick="gantiEWallet()" class="text-[10px] font-black text-blue-400 hover:text-white hover:bg-blue-600 transition-all uppercase tracking-widest bg-blue-500/10 px-3 py-2 rounded-lg border border-blue-500/30">Ganti</button>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest ml-1">Nama Pelanggan</label>
+                            <input type="text" id="nama_pelanggan_topup" placeholder="Ketik nama Anda..." required class="w-full p-4 rounded-xl input-dark text-sm font-bold tracking-wider">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest ml-1">Nomor HP Tujuan</label>
+                            <input type="number" id="nomor_hp" placeholder="08xxxxxxxxxx" required class="w-full p-4 rounded-xl input-dark text-xl font-bold tracking-wider">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest ml-1">Pilih Nominal Saldo</label>
+                            <div id="container-nominal" class="grid grid-cols-1 gap-2.5 max-h-60 overflow-y-auto pr-1"></div>
+                        </div>
+                        <button onclick="kirimTopUp()" id="btn-submit-topup" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95">
+                            KIRIM TOP UP
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-[#1E293B] p-6 rounded-[2.5rem] shadow-2xl border border-slate-800">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
+                    <h2 class="font-black text-xs text-blue-400 uppercase tracking-widest ml-1">📋 Riwayat Top Up</h2>
+                    <button onclick="loadRiwayatLive()" class="text-[10px] font-bold text-blue-400 hover:text-blue-500 uppercase tracking-wider">🔄 Refresh</button>
+                </div>
+                <div id="container-riwayat" class="space-y-3 max-h-64 overflow-y-auto pr-1 text-xs">
+                    <div class="text-center text-slate-500 py-4">Belum ada transaksi di HP ini.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="min-h-screen bg-[#131722] text-white p-5 flex-col items-center pt-8 pb-24 hidden" id="halaman-lacak-visual">
+            <h3 class="text-[#22c55e] font-extrabold text-xs tracking-[0.2em] mb-3 text-center">LIVE TRACKING</h3>
+            <h1 id="teks-status-lacak" class="text-2xl font-extrabold italic text-white mb-10 text-center tracking-wide">MENCARI PESANAN...</h1>
+
+            <div class="bg-[#1e2536] w-full rounded-[2rem] p-6 relative h-64 shadow-2xl border border-gray-700/50 mb-8">
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <path d="M 20,75 C 40,75 50,25 80,25" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="3 3" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute bottom-[10%] left-[8%] flex flex-col items-center z-10">
+                    <div class="text-4xl bg-[#1e2536] rounded-full p-2 mb-1 border-b-[3px] border-blue-400">🏪</div>
+                    <span class="text-[10px] text-gray-500 font-bold tracking-wider">WARUNG</span>
+                </div>
+                <div class="absolute top-[8%] right-[8%] flex flex-col items-center z-10">
+                    <div class="text-4xl bg-[#1e2536] rounded-full p-2 mb-1 border-b-[3px] border-orange-400">🏠</div>
+                    <span class="text-[10px] text-gray-500 font-bold tracking-wider">RUMAH</span>
+                </div>
+                <div id="ikon-kurir" class="absolute text-5xl transition-all duration-1000 ease-in-out z-20 kurir-diam" style="left: 10%; top: 55%;">🚶</div>
+            </div>
+
+            <div class="bg-[#1e2536] rounded-2xl w-full p-5 text-center italic text-gray-400 text-sm font-medium border border-gray-800">
+                <span id="pesan-motivasi">"Mohon tunggu ya, pesananmu sedang diproses!"</span>
+            </div>
+
+            <button onclick="bukaBeranda()" class="mt-6 bg-[#161b28] border border-gray-700 w-full py-4 rounded-xl font-extrabold text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition shadow-lg tracking-wide">
+                KEMBALI KE MENU
+            </button>
+        </div>
+
+        <div id="modal-lacak" class="hidden fixed inset-0 bg-black/80 z-50 flex justify-center items-center p-5">
+            <div class="bg-[#242b3d] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-gray-700 relative animate-[slideUp_0.2s_ease-out]">
+                <button onclick="tutupModalLacak()" class="absolute top-5 right-6 text-gray-400 hover:text-white text-2xl font-light">&times;</button>
+                <h2 class="text-white font-extrabold italic text-lg mb-6 tracking-wide mt-2">LACAK PESANAN KOPI</h2>
+                <input type="text" id="input-nama-lacak" class="w-full bg-[#1b2130] border border-gray-600 rounded-2xl p-4 text-white placeholder-gray-500 outline-none focus:border-[#22c55e] mb-6 font-bold text-sm transition" placeholder="Ketik Nama Pembeli...">
+                <button id="btn-cari-lacak" onclick="cariPesanan()" class="w-full bg-[#22c55e] text-white font-extrabold py-4 rounded-xl shadow-[0_4px_20px_rgba(34,197,94,0.3)] active:scale-95 transition tracking-wider text-sm">
+                    CARI
+                </button>
+            </div>
+        </div>
+
+        <div id="modal-checkout" class="hidden fixed inset-0 bg-black/60 z-50 flex justify-center items-end sm:items-center">
+            <div class="bg-white w-full max-w-md p-6 rounded-t-2xl sm:rounded-2xl shadow-2xl animate-[slideUp_0.3s_ease-out] max-h-[90vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4 border-b pb-2 shrink-0">
+                    <h2 class="text-xl font-bold text-stone-800">Keranjang</h2>
+                    <button onclick="tutupCheckout()" class="text-stone-400 hover:text-red-500 font-bold text-3xl">&times;</button>
+                </div>
+                
+                <div class="overflow-y-auto hide-scroll mb-2 shrink">
+                    <div class="bg-stone-50 p-3 rounded-lg border border-stone-200">
+                        <div id="daftar-pesanan-checkout" class="flex flex-col"></div>
+                        <div class="flex justify-between items-center border-t border-stone-300 pt-3 mt-2">
+                            <span class="font-bold text-stone-800">Total Harga:</span>
+                            <span id="total-harga-checkout" class="font-extrabold text-[#d97706] text-xl">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 shrink-0 mt-3 border-t-2 border-stone-100 pt-4">
+                    <div>
+                        <label class="block text-stone-800 font-extrabold text-base mb-2" for="nama-pemesan">Nama Pemesan:</label>
+                        <input type="text" id="nama-pemesan" class="w-full border-2 border-stone-300 rounded-xl p-3 text-lg focus:border-[#d97706] outline-none font-bold placeholder-stone-400" placeholder="Ketik nama...">
+                    </div>
+                    <div>
+                        <select id="metode-bayar" class="w-full border-2 border-stone-300 rounded-xl p-3 bg-stone-50 text-stone-700 font-bold outline-none">
+                            <option value="COD">💵 Bayar di Tempat (COD)</option>
+                        </select>
+                    </div>
+                    <button id="btn-kirim" onclick="kirimPesananKopi()" class="w-full bg-[#d97706] text-white font-extrabold py-3.5 mt-2 rounded-xl shadow-lg active:scale-95 transition text-lg">
+                        Kirim Pesanan
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1a1f2e] border-t border-gray-800 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.5)] z-40 flex justify-around items-center px-4 py-3 pb-safe rounded-t-3xl" id="nav-bawah">
             <button onclick="bukaModalLacak()" class="flex flex-col items-center text-gray-400 hover:text-white transition relative">
                 <span class="text-2xl">🔍</span><span class="text-[9px] font-extrabold mt-1 tracking-wide">LACAK</span>
@@ -60,52 +221,588 @@
                 <span id="jumlah-item-bawah" class="absolute -top-1 right-0 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm hidden">0</span>
             </button>
         </div>
+        
+        <div id="modal-success-topup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">
+            <div class="bg-[#1E293B] w-full max-w-sm rounded-[2rem] p-8 shadow-2xl border border-blue-500/50 text-center animate-[slideUp_0.3s_ease-out]">
+                <div class="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-blue-400">
+                    <span class="text-5xl">🛵</span>
+                </div>
+                <h2 class="text-white font-black text-2xl mb-3 tracking-wide">TOP UP COD BERHASIL!</h2>
+                <div class="bg-slate-800 p-4 rounded-xl mb-6 border border-slate-700">
+                    <p class="text-slate-300 text-sm font-medium leading-relaxed">
+                        Sediakan uang kes untuk pembayaran karena admin sedang menuju ke lokasi <span class="text-yellow-400 font-bold italic">jikot dowet</span>.
+                    </p>
+                </div>
+                <button onclick="tutupModalSuccessTopup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-4 rounded-xl shadow-[0_4px_20px_rgba(37,99,235,0.4)] active:scale-95 transition tracking-wider text-sm uppercase">
+                    SIAP, MANTAP!
+                </button>
+            </div>
+        </div>
 
-        <!-- Modals tetap ada di sini (seperti kode asli Anda) -->
-        <div id="modal-lacak" class="hidden fixed inset-0 bg-black/80 z-50 flex justify-center items-center p-5">...</div>
-        <div id="modal-checkout" class="hidden fixed inset-0 bg-black/60 z-50 flex justify-center items-end sm:items-center">...</div>
-        <div id="modal-pin" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5">...</div>
-        <div id="modal-admin-status" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5">...</div>
-        <div id="modal-toko-tutup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">...</div>
-        <div id="modal-success-topup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">...</div>
+        <div id="modal-toko-tutup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">
+            <div class="bg-red-600 w-full max-w-sm rounded-[2rem] p-8 shadow-2xl text-center border-4 border-red-800 animate-[slideUp_0.3s_ease-out]">
+                <span class="text-6xl block mb-4">⛔</span>
+                <h2 class="text-white font-black text-2xl mb-2">MOHON MAAF</h2>
+                <p class="text-red-100 font-bold text-base mb-8">WARUNG DAN TOP UP SEDANG TUTUP</p>
+                <button onclick="tutupModalTokoTutup()" class="bg-white text-red-600 hover:bg-red-50 font-black py-4 px-8 rounded-xl w-full active:scale-95 transition tracking-wider">KEMBALI</button>
+            </div>
+        </div>
+
+        <div id="modal-pin" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center animate-[slideUp_0.2s_ease-out]">
+                <h2 class="text-stone-800 font-extrabold text-xl mb-2">Akses Admin 🔒</h2>
+                <p class="text-stone-500 text-xs mb-4">Masukkan PIN untuk membuka pengaturan</p>
+                <input type="password" id="input-pin" class="w-full border-2 border-stone-300 rounded-xl p-3 text-center text-2xl tracking-[0.5em] mb-4 outline-none focus:border-[#d97706]" placeholder="••••">
+                <div class="flex gap-2">
+                    <button onclick="tutupModalPin()" class="w-1/2 bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold py-3 rounded-xl transition">Batal</button>
+                    <button onclick="verifikasiPin()" class="w-1/2 bg-[#d97706] hover:bg-amber-700 text-white font-bold py-3 rounded-xl transition">Masuk</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-admin-status" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center animate-[slideUp_0.2s_ease-out]">
+                <h2 class="text-stone-800 font-extrabold text-xl mb-6">Pengaturan Warung ⚙️</h2>
+                <div class="flex justify-between items-center bg-stone-100 p-5 rounded-xl mb-6 border border-stone-200">
+                    <span class="font-extrabold text-green-600 text-lg" id="label-status-warung">Status: BUKA</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="toggle-buka-tutup" class="sr-only peer" checked onchange="ubahStatusWarung()">
+                      <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500"></div>
+                    </label>
+                </div>
+                <button onclick="tutupModalAdmin()" class="w-full bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold py-3.5 rounded-xl transition">Tutup Pengaturan</button>
+                <p class="text-[10px] text-stone-400 mt-4 italic">*Buat tabel "pengaturan_warung" di Supabase (kolom status_buka) agar sinkron ke semua HP pembeli.</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const PIN_RAHASIA = '1234';
-        const clientDB = window.supabase.createClient('https://butydxuauhtvwojvpixt.supabase.co', 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X');
+        // ================= PENGATURAN PIN ADMIN =================
+        const PIN_RAHASIA = '1234'; // <- GANTI PIN-MU DI SINI
+
+        // INISIALISASI SUPABASE (Hanya perlu 1 client untuk kedua fitur)
+        const SUPABASE_URL = 'https://butydxuauhtvwojvpixt.supabase.co'; 
+        const SUPABASE_KEY = 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X';
+        const clientDB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // DATA TELEGRAM - WARUNG KOPI & TOP UP
         const TELE_TOKEN_KOPI = '8854342299:AAF3dBZvDDItaPS08hhYI_-0Q4ccm-dKgPs';
         const TELE_ID_KOPI = '8498622906';
-        let keranjang = JSON.parse(localStorage.getItem('keranjangWarungBasecamp')) || [];
-        let semuaMenuDB = [];
+        
+        const TELE_TOKEN_TOPUP = '8854342299:AAF3dBZvDDItaPS08hhYI_-0Q4ccm-dKgPs';
+        const TELE_ID_TOPUP = '8498622906'; 
 
-        // FUNGSI TOP UP BARU
-        function bukaTopUp() {
-            window.location.href = 'https://grabwarung.mkz.my.id/index.php';
+        // VARIABEL WARUNG KOPI
+        let keranjang = JSON.parse(localStorage.getItem('keranjangWarungBasecamp')) || [];
+        let totalHarga = 0;
+        let semuaMenuDB = [];
+        let kategoriSaatIni = 'Semua';
+        let pesananAktif = null;
+
+        // VARIABEL TOP UP
+        let providerTerpilih = ''; let skuCodeTerpilih = ''; let namaProdukTerpilih = ''; let hargaJualTerpilih = 0;
+        
+        // VARIABEL STATUS WARUNG (BUKA/TUTUP)
+        let isWarungBuka = true;
+
+        // ================= KONTROL STATUS WARUNG & PIN =================
+        async function cekStatusWarungDB() {
+            try {
+                // Mencoba mengambil data dari tabel 'pengaturan_warung' id 1. 
+                // Jika error (karena tabel belum dibuat), akan diabaikan dan pakai default lokal (buka).
+                const { data, error } = await clientDB.from('pengaturan_warung').select('status_buka').eq('id', 1).single();
+                if (data !== null) {
+                    isWarungBuka = data.status_buka;
+                    document.getElementById('toggle-buka-tutup').checked = isWarungBuka;
+                    perbaruiLabelStatus();
+                }
+            } catch (e) { console.log("Tabel pengaturan_warung belum ada."); }
         }
 
-        // FUNGSI LAINNYA (Sama persis seperti kode lama Anda)
-        function bukaBeranda() { window.location.reload(); }
+        // Fungsi buka PIN Modalnya
+        function bukaModalPin() { 
+            document.getElementById('modal-pin').classList.remove('hidden');
+            document.getElementById('input-pin').value = '';
+            // Auto fokus ke input setelah jeda sebentar (untuk animasi)
+            setTimeout(() => document.getElementById('input-pin').focus(), 100);
+        }
         
+        function tutupModalPin() { 
+            document.getElementById('modal-pin').classList.add('hidden'); 
+        }
+
+        // Fungsi verifikasi PIN
+        function verifikasiPin() {
+            const input = document.getElementById('input-pin').value;
+            if (input === PIN_RAHASIA) {
+                tutupModalPin();
+                bukaModalAdmin(); // Kalau PIN benar, baru buka Pengaturan
+            } else {
+                tampilkanNotifikasi("PIN Salah! Akses ditolak.", "error");
+                document.getElementById('input-pin').value = '';
+                document.getElementById('input-pin').focus();
+            }
+        }
+
+        // Tombol enter bisa submit PIN
+        document.getElementById('input-pin').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') verifikasiPin();
+        });
+
+        function bukaModalAdmin() { document.getElementById('modal-admin-status').classList.remove('hidden'); }
+        function tutupModalAdmin() { document.getElementById('modal-admin-status').classList.add('hidden'); }
+        function tutupModalTokoTutup() { document.getElementById('modal-toko-tutup').classList.add('hidden'); }
+        function tutupModalSuccessTopup() { 
+            document.getElementById('modal-success-topup').classList.add('hidden'); 
+            bukaTopUp(); // Refresh halaman topup
+        }
+
+        async function ubahStatusWarung() {
+            isWarungBuka = document.getElementById('toggle-buka-tutup').checked;
+            perbaruiLabelStatus();
+            try {
+                // Coba update ke Supabase agar sinkron global (pastikan tabel dibuat)
+                await clientDB.from('pengaturan_warung').update({ status_buka: isWarungBuka }).eq('id', 1);
+            } catch (e) {}
+        }
+
+        function perbaruiLabelStatus() {
+            const label = document.getElementById('label-status-warung');
+            if (isWarungBuka) {
+                label.innerText = "Status: BUKA";
+                label.className = "font-extrabold text-green-600 text-lg";
+            } else {
+                label.innerText = "Status: TUTUP";
+                label.className = "font-extrabold text-red-600 text-lg";
+            }
+        }
+
+        // ================= KONTROL NOTIFIKASI & NAVIGASI =================
+        function tampilkanNotifikasi(pesan, tipe = 'sukses') {
+            const toast = document.getElementById('toast');
+            const toastContent = document.getElementById('toast-content');
+            toastContent.className = tipe === 'sukses' ? 'px-6 py-3 rounded-full shadow-lg text-sm font-bold text-white flex items-center justify-center gap-2 bg-green-500 w-full' : 'px-6 py-3 rounded-full shadow-lg text-sm font-bold text-white flex items-center justify-center gap-2 bg-red-500 w-full';
+            toastContent.innerHTML = `<span>${pesan}</span>`;
+            toast.classList.remove('-translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('-translate-y-24', 'opacity-0'); }, 3000);
+        }
+
+        function tutupSemuaHalaman() {
+            document.getElementById('halaman-beranda').classList.add('hidden');
+            document.getElementById('header-utama').classList.add('hidden'); 
+            document.getElementById('halaman-lacak-visual').classList.add('hidden');
+            document.getElementById('halaman-lacak-visual').classList.remove('flex');
+            document.getElementById('halaman-topup').classList.add('hidden');
+            document.getElementById('halaman-topup').classList.remove('flex');
+        }
+
+        function bukaBeranda() { 
+            tutupSemuaHalaman();
+            document.getElementById('halaman-beranda').classList.remove('hidden'); 
+            document.getElementById('header-utama').classList.remove('hidden');
+        }
+
+        function bukaTopUp() {
+            tutupSemuaHalaman();
+            document.getElementById('halaman-topup').classList.remove('hidden');
+            document.getElementById('halaman-topup').classList.add('flex');
+            loadRiwayatLive();
+        }
+
+        function bukaLacakVisual() {
+            tutupSemuaHalaman();
+            document.getElementById('halaman-lacak-visual').classList.remove('hidden');
+            document.getElementById('halaman-lacak-visual').classList.add('flex');
+            perbaruiVisualLacak();
+        }
+
+        // ================= FITUR REAL-TIME SUPABASE =================
+        clientDB.channel('public:semua_perubahan')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'pesanan_warung' }, payload => {
+                let riwayat = JSON.parse(localStorage.getItem('riwayatWarungBasecamp')) || [];
+                if (payload.eventType === 'UPDATE') {
+                    let index = riwayat.findIndex(r => r.id === payload.new.id);
+                    if (index !== -1) {
+                        riwayat[index].status = payload.new.status;
+                        localStorage.setItem('riwayatWarungBasecamp', JSON.stringify(riwayat));
+                    }
+                    if (pesananAktif && pesananAktif.id === payload.new.id && !document.getElementById('halaman-lacak-visual').classList.contains('hidden')) {
+                        pesananAktif.status = payload.new.status;
+                        perbaruiVisualLacak();
+                    }
+                } else if (payload.eventType === 'DELETE') {
+                    let index = riwayat.findIndex(r => r.id === payload.old.id);
+                    if (index !== -1) {
+                        riwayat.splice(index, 1);
+                        localStorage.setItem('riwayatWarungBasecamp', JSON.stringify(riwayat));
+                    }
+                    if (pesananAktif && pesananAktif.id === payload.old.id && !document.getElementById('halaman-lacak-visual').classList.contains('hidden')) {
+                        tampilkanNotifikasi("Pesanan Kopi telah dihapus/direset oleh Admin.", "error");
+                        setTimeout(() => { bukaBeranda(); }, 2500);
+                    }
+                }
+            })
+            // Realtime Topup (Mendengarkan perubahan pesanan_pulsa)
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pesanan_pulsa' }, payload => {
+                 if (!document.getElementById('halaman-topup').classList.contains('hidden')) {
+                     loadRiwayatLive();
+                 }
+            })
+            // Realtime Buka/Tutup Warung
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pengaturan_warung' }, payload => {
+                 isWarungBuka = payload.new.status_buka;
+                 document.getElementById('toggle-buka-tutup').checked = isWarungBuka;
+                 perbaruiLabelStatus();
+            }).subscribe();
+
+
+        // ================= LOGIKA WARUNG KOPI =================
         async function ambilDataMenu() {
             const { data } = await clientDB.from('menu_warung').select('*').order('nama_menu', { ascending: true });
-            if(data) { semuaMenuDB = data; renderMenu(); }
+            if(data) { semuaMenuDB = data; renderTombolKategori(); renderMenu(); }
         }
+
+        function renderTombolKategori() {
+            const container = document.getElementById('kategori-container');
+            container.innerHTML = '';
+            let listKategori = ['Semua'];
+            semuaMenuDB.forEach(item => { let kat = item.kategori ? item.kategori.trim() : 'Lainnya'; if (!listKategori.includes(kat)) listKategori.push(kat); });
+            listKategori.forEach(kat => {
+                const isAktif = kat === kategoriSaatIni;
+                const classTombol = isAktif ? 'bg-[#d97706] text-white border-[#d97706]' : 'bg-white text-stone-600 border-stone-300';
+                container.innerHTML += `<button onclick="pilihKategori('${kat}')" class="${classTombol} px-4 py-1.5 rounded-full text-sm font-bold border transition">${kat}</button>`;
+            });
+        }
+
+        function pilihKategori(kat) { kategoriSaatIni = kat; renderTombolKategori(); renderMenu(); }
 
         function renderMenu() {
             const ruangMenu = document.getElementById('ruang-menu');
-            ruangMenu.innerHTML = semuaMenuDB.map(item => `
-                <div class="bg-white rounded-xl shadow-sm border p-3">
-                    <h3 class="font-bold text-stone-800 text-sm">${item.nama_menu}</h3>
-                    <p class="text-[#d97706] font-extrabold text-sm mt-2">Rp ${item.harga.toLocaleString('id-ID')}</p>
-                    <button onclick="tambahKeKeranjang('${item.nama_menu.replace(/'/g, "\\'")}', ${item.harga})" class="mt-2 w-full bg-[#d97706] text-white py-2 rounded-lg text-xs font-bold">BELI</button>
-                </div>
-            `).join('');
+            ruangMenu.innerHTML = ''; 
+            const dataDisaring = semuaMenuDB.filter(item => kategoriSaatIni === 'Semua' || (item.kategori ? item.kategori.trim() : 'Lainnya') === kategoriSaatIni);
+            dataDisaring.forEach(item => {
+                const gambar = item.foto_url && item.foto_url !== "" ? item.foto_url : 'https://placehold.co/400x300?text=No+Image';
+                ruangMenu.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden flex flex-col group">
+                        <img src="${gambar}" class="w-full h-32 object-cover">
+                        <div class="p-3 flex flex-col flex-grow">
+                            <h3 class="font-bold text-stone-800 text-sm leading-tight flex-grow">${item.nama_menu}</h3>
+                            <p class="text-[#d97706] font-extrabold text-sm mt-2">Rp ${item.harga.toLocaleString('id-ID')}</p>
+                            <button onclick="tambahKeKeranjang('${item.nama_menu.replace(/'/g, "\\'")}', ${item.harga})" class="mt-3 w-full bg-[#d97706] text-white font-bold text-xs py-2.5 rounded-lg active:scale-95 shadow-sm">BELI</button>
+                        </div>
+                    </div>`;
+            });
         }
-        
-        // Pastikan Anda memanggil fungsi ini saat load
+
+        function tambahKeKeranjang(nama, harga) {
+            const itemAda = keranjang.find(item => item.nama === nama);
+            if (itemAda) itemAda.jumlah += 1; else keranjang.push({ nama, harga, jumlah: 1 });
+            localStorage.setItem('keranjangWarungBasecamp', JSON.stringify(keranjang));
+            updateTampilanKeranjang(); tampilkanNotifikasi("Dimasukkan keranjang! 🛒");
+        }
+
+        function ubahJumlahItem(nama, perubahan) {
+            const index = keranjang.findIndex(item => item.nama === nama);
+            if (index !== -1) {
+                keranjang[index].jumlah += perubahan;
+                if (keranjang[index].jumlah <= 0) keranjang.splice(index, 1);
+                localStorage.setItem('keranjangWarungBasecamp', JSON.stringify(keranjang));
+                updateTampilanKeranjang();
+            }
+        }
+
+        function updateTampilanKeranjang() {
+            const badge = document.getElementById('jumlah-item-bawah');
+            const listArea = document.getElementById('daftar-pesanan-checkout');
+            const teksTotal = document.getElementById('total-harga-checkout');
+            if (keranjang.length === 0) {
+                badge.classList.add('hidden');
+                listArea.innerHTML = `<div class="text-center py-6 text-stone-400">Kosong</div>`;
+                teksTotal.innerText = 'Rp 0';
+                return;
+            }
+            badge.classList.remove('hidden');
+            let qty = 0; totalHarga = 0; let listHTML = '';
+            keranjang.forEach(item => {
+                qty += item.jumlah; totalHarga += item.harga * item.jumlah;
+                listHTML += `
+                    <div class="flex justify-between items-center border-b border-stone-200 py-3 last:border-0">
+                        <span class="text-sm font-bold w-1/2 truncate">${item.nama}</span>
+                        <div class="flex gap-2">
+                            <button onclick="ubahJumlahItem('${item.nama.replace(/'/g, "\\'")}', -1)" class="bg-stone-200 w-6 h-6 rounded-full font-bold">-</button>
+                            <span class="text-sm font-bold w-4 text-center">${item.jumlah}</span>
+                            <button onclick="ubahJumlahItem('${item.nama.replace(/'/g, "\\'")}', 1)" class="bg-[#d97706] text-white w-6 h-6 rounded-full font-bold">+</button>
+                        </div>
+                    </div>`;
+            });
+            badge.innerText = qty; listArea.innerHTML = listHTML; teksTotal.innerText = `Rp ${totalHarga.toLocaleString('id-ID')}`;
+        }
+
+        function bukaCheckout() { document.getElementById('modal-checkout').classList.remove('hidden'); }
+        function tutupCheckout() { document.getElementById('modal-checkout').classList.add('hidden'); }
+
+        async function kirimPesananKopi() {
+            // CEK STATUS WARUNG DULU
+            if (!isWarungBuka) {
+                document.getElementById('modal-toko-tutup').classList.remove('hidden');
+                return;
+            }
+
+            const nama = document.getElementById('nama-pemesan').value;
+            const btn = document.getElementById('btn-kirim');
+            
+            if (keranjang.length === 0 || !nama) return tampilkanNotifikasi("Isi Nama & Keranjang!", "error");
+            btn.innerText = "Memproses..."; btn.disabled = true;
+
+            try {
+                const { data, error } = await clientDB.from('pesanan_warung').insert([{
+                    nama_pemesan: nama, alamat: "-", total_harga: totalHarga, detail_pesanan: keranjang, status: 'Pending'
+                }]).select();
+
+                if (error) throw error;
+
+                // Telegram Kopi
+                let detailPesanan = keranjang.map(i => `• ${i.jumlah}x ${i.nama}`).join('%0A');
+                let pesanTele = `🔔 *PESANAN BARU MASUK!*%0A%0A👤 *Nama:* ${nama}%0A🛍️ *Pesanan:*%0A${detailPesanan}%0A%0A💰 *Total:* Rp ${totalHarga.toLocaleString('id-ID')}%0A%0A🚶 *Segera Proses via Dashboard Admin!*`;
+                fetch(`https://api.telegram.org/bot${TELE_TOKEN_KOPI}/sendMessage?chat_id=${TELE_ID_KOPI}&text=${pesanTele}&parse_mode=Markdown`, { mode: 'no-cors' });
+
+                const orderId = data[0].id; 
+                let riwayat = JSON.parse(localStorage.getItem('riwayatWarungBasecamp')) || [];
+                const pesananBaru = {
+                    id: orderId, status: 'Pending',
+                    tanggal: new Date().toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+                    nama_pemesan: nama, total_harga: totalHarga, metode: 'COD', detail_pesanan: keranjang
+                };
+                riwayat.unshift(pesananBaru);
+                localStorage.setItem('riwayatWarungBasecamp', JSON.stringify(riwayat));
+                
+                keranjang = []; localStorage.setItem('keranjangWarungBasecamp', JSON.stringify(keranjang)); 
+                updateTampilanKeranjang(); tutupCheckout();
+                document.getElementById('nama-pemesan').value = ''; 
+                
+                tampilkanNotifikasi("Pesanan Kopi Berhasil Dibuat!");
+                setTimeout(() => { pesananAktif = pesananBaru; bukaLacakVisual(); }, 1000);
+
+            } catch (err) { tampilkanNotifikasi("Gagal kirim!", "error"); } 
+            finally { btn.innerText = "Kirim Pesanan"; btn.disabled = false; }
+        }
+
+        // ================= KONTROL LACAK =================
+        function bukaModalLacak() { 
+            document.getElementById('modal-lacak').classList.remove('hidden'); 
+            document.getElementById('input-nama-lacak').focus();
+        }
+        function tutupModalLacak() { 
+            document.getElementById('modal-lacak').classList.add('hidden'); 
+            document.getElementById('input-nama-lacak').value = '';
+        }
+
+        async function cariPesanan() {
+            const namaCari = document.getElementById('input-nama-lacak').value.trim();
+            if (!namaCari) return tampilkanNotifikasi("Masukkan nama terlebih dahulu!", "error");
+
+            const btn = document.getElementById('btn-cari-lacak');
+            btn.innerText = "MENCARI..."; btn.disabled = true;
+
+            try {
+                const { data, error } = await clientDB.from('pesanan_warung').select('*')
+                    .ilike('nama_pemesan', namaCari).order('id', { ascending: false }).limit(1);
+
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    pesananAktif = data[0]; tutupModalLacak(); bukaLacakVisual(); tampilkanNotifikasi("Pesanan ditemukan!");
+                } else {
+                    tampilkanNotifikasi("Pesanan tidak ditemukan/dihapus!", "error");
+                }
+            } catch (err) { tampilkanNotifikasi("Gagal mencari data!", "error"); } 
+            finally { btn.innerText = "CARI"; btn.disabled = false; }
+        }
+
+        function perbaruiVisualLacak() {
+            if (!pesananAktif) return;
+            const teksStatus = document.getElementById('teks-status-lacak');
+            const ikonKurir = document.getElementById('ikon-kurir');
+            const pesanMotivasi = document.getElementById('pesan-motivasi');
+
+            ikonKurir.className = 'absolute text-5xl transition-all duration-1000 ease-in-out z-20';
+
+            switch (pesananAktif.status) {
+                case 'Pending':
+                    teksStatus.innerText = "MENUNGGU KONFIRMASI"; ikonKurir.style.left = "10%"; ikonKurir.style.top = "55%";
+                    ikonKurir.classList.add('kurir-diam'); pesanMotivasi.innerText = '"Mohon tunggu ya, warung sedang mengecek pesananmu!"';
+                    break;
+                case 'Diproses':
+                    teksStatus.innerText = "SEDANG DISIAPKAN"; ikonKurir.style.left = "10%"; ikonKurir.style.top = "55%";
+                    ikonKurir.classList.add('animasi-kurir-jalan'); pesanMotivasi.innerText = '"Mantap! Kopi dan udutmu sedang disiapkan!"';
+                    break;
+                case 'Dikirim':
+                    teksStatus.innerText = "SEDANG DIANTAR"; ikonKurir.style.left = "45%"; ikonKurir.style.top = "35%";
+                    ikonKurir.classList.add('animasi-kurir-jalan'); pesanMotivasi.innerText = '"Siap-siap! Kurir berjalan menuju lokasimu 🏃‍♂️💨"';
+                    break;
+                case 'Selesai':
+                    teksStatus.innerText = "PESANAN TIBA"; ikonKurir.style.left = "75%"; ikonKurir.style.top = "15%";
+                    ikonKurir.classList.add('kurir-diam'); pesanMotivasi.innerText = '"Pesanan sudah sampai. Selamat ngopi dan udut! ☕🚬"';
+                    break;
+                default: teksStatus.innerText = "MEMUAT..."; break;
+            }
+        }
+
+        // ================= LOGIKA TOP UP E-WALLET =================
+        function pilihEWallet(idCode, providerName) {
+            providerTerpilih = providerName;
+            
+            // Sembunyikan bagian pilih dompet agar layar lebih longgar
+            document.getElementById('pilih-dompet-container').classList.add('hidden');
+            
+            // Update label E-wallet terpilih beserta inisial/ikon nya
+            document.getElementById('label-dompet-terpilih').innerText = providerName;
+            document.getElementById('ikon-dompet-terpilih').innerText = idCode;
+
+            skuCodeTerpilih = ''; namaProdukTerpilih = ''; hargaJualTerpilih = 0;
+            generateListNominal(idCode, providerName);
+            
+            // Tampilkan form input utama
+            document.getElementById('form-input-dinamis').classList.remove('hidden');
+            
+            // Auto focus ke input nama pelanggan
+            document.getElementById('nama_pelanggan_topup').focus();
+        }
+
+        // Fungsi baru untuk mengembalikan tampilan ke pilihan e-wallet
+        function gantiEWallet() {
+            document.getElementById('form-input-dinamis').classList.add('hidden');
+            document.getElementById('pilih-dompet-container').classList.remove('hidden');
+            // Hapus pilihan aktif sebelumnya
+            document.querySelectorAll('.wallet-card').forEach(card => card.classList.remove('active'));
+        }
+
+        function generateListNominal(idCode, providerName) {
+            const container = document.getElementById('container-nominal');
+            container.innerHTML = '';
+            let daftarNominal = [];
+            for (let i = 1000; i <= 10000; i += 1000) { daftarNominal.push({ nominal: i, harga: i + 2000 }); }
+            for (let i = 15000; i <= 100000; i += 5000) { daftarNominal.push({ nominal: i, harga: i + 5000 }); }
+
+            daftarNominal.forEach(item => {
+                const sku = `${idCode}${item.nominal / 1000}`;
+                const namaProduk = `${providerName} ${item.nominal.toLocaleString('id-ID')}`;
+                container.innerHTML += `
+                    <div onclick="setNominalAktif('${sku}', '${namaProduk}', ${item.harga}, this)" 
+                        class="nominal-card p-4 rounded-xl flex justify-between items-center border border-slate-700/60 bg-slate-800/40 hover:border-slate-600 transition-all">
+                        <div class="flex flex-col text-left">
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${providerName} Agen</span>
+                            <span class="font-extrabold text-white text-sm">${item.nominal.toLocaleString('id-ID')}</span>
+                        </div>
+                        <span class="text-sm font-black text-emerald-400">Rp ${item.harga.toLocaleString('id-ID')}</span>
+                    </div>`;
+            });
+        }
+
+        function setNominalAktif(sku, nama, harga, element) {
+            skuCodeTerpilih = sku; namaProdukTerpilih = nama; hargaJualTerpilih = harga;
+            document.querySelectorAll('.nominal-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        async function loadRiwayatLive() {
+            const container = document.getElementById('container-riwayat');
+            let myTrxIds = JSON.parse(localStorage.getItem('my_basecamp_topup_ids')) || [];
+            if (myTrxIds.length === 0) {
+                container.innerHTML = `<div class="text-center text-slate-500 py-4">Belum ada transaksi di HP ini.</div>`;
+                return;
+            }
+            const batasanWaktuHariIni = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+            const { data, error } = await clientDB.from('pesanan_pulsa').select('*')
+                .in('id', myTrxIds).gte('created_at', batasanWaktuHariIni).order('created_at', { ascending: false });
+
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center text-slate-500 py-4">Riwayat hari ini bersih otomatis.</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                const waktu = new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                let statusBadge = `<span class="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 text-[8px] font-black uppercase rounded tracking-wider border border-yellow-500/20">Pending</span>`;
+                if (item.status === 'success') statusBadge = `<span class="px-1.5 py-0.5 bg-green-500/10 text-green-400 text-[8px] font-black uppercase rounded tracking-wider border border-green-500/20">Success</span>`;
+
+                container.innerHTML += `
+                    <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div class="flex flex-col text-left gap-0.5">
+                            <span class="font-black text-white text-xs">${item.nama_produk}</span>
+                            <span class="text-[10px] text-slate-400 font-mono tracking-wider">Tujuan: ${item.nomor_tujuan}</span>
+                            <span class="text-[9px] text-slate-500 font-bold">${waktu} WIB</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="font-extrabold text-emerald-400 text-xs">Rp ${parseInt(item.harga_jual).toLocaleString('id-ID')}</span>
+                            ${statusBadge}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        async function kirimTopUp() {
+            // CEK STATUS WARUNG DULU
+            if (!isWarungBuka) {
+                document.getElementById('modal-toko-tutup').classList.remove('hidden');
+                return;
+            }
+
+            const namaPelanggan = document.getElementById('nama_pelanggan_topup').value.trim();
+            const noHp = document.getElementById('nomor_hp').value.trim();
+            
+            if (!namaPelanggan) return tampilkanNotifikasi("Isi nama pelanggan dulu Mas!", "error");
+            if (!noHp) return tampilkanNotifikasi("Isi nomor HP tujuan dulu Mas!", "error");
+            if (!skuCodeTerpilih) return tampilkanNotifikasi("Pilih nominal saldonya dulu Mas!", "error");
+
+            const btn = document.getElementById('btn-submit-topup');
+            btn.innerText = "MEMPROSES..."; btn.disabled = true;
+
+            try {
+                const { data, error } = await clientDB.from('pesanan_pulsa').insert([{
+                    nama_produk: namaProdukTerpilih, sku_code: skuCodeTerpilih, nomor_tujuan: noHp, harga_jual: hargaJualTerpilih, status: 'pending'
+                }]).select();
+
+                if (error || !data) throw error;
+
+                // Tampilkan Modal Modern Bukannya Notifikasi Toast Biasa
+                document.getElementById('modal-success-topup').classList.remove('hidden');
+
+                let currentSavedIds = JSON.parse(localStorage.getItem('my_basecamp_topup_ids')) || [];
+                currentSavedIds.unshift(data[0].id); 
+                localStorage.setItem('my_basecamp_topup_ids', JSON.stringify(currentSavedIds));
+
+                loadRiwayatLive();
+
+                const pesanTele = `🔔 *ADA ANTREAN TOP UP MASUK* 🔔\n\n👤 *Nama:* ${namaPelanggan}\n🎯 *No Tujuan:* ${noHp}\n📦 *Produk:* ${namaProdukTerpilih}\n🆔 *SKU Code:* ${skuCodeTerpilih}\n💵 *Harga Jual:* Rp ${hargaJualTerpilih.toLocaleString('id-ID')}\n⚡ *Status:* PENDING\n\n_Harap buka adminpulsa.html untuk memproses_`;
+                
+                fetch(`https://api.telegram.org/bot${TELE_TOKEN_TOPUP}/sendMessage?chat_id=${TELE_ID_TOPUP}&text=${encodeURIComponent(pesanTele)}&parse_mode=Markdown`, { mode: 'no-cors' });
+
+                // Reset Form
+                document.getElementById('nama_pelanggan_topup').value = '';
+                document.getElementById('nomor_hp').value = '';
+                skuCodeTerpilih = ''; 
+                
+                // Kembalikan ke tampilan pemilihan e-wallet untuk transaksi selanjutnya
+                gantiEWallet();
+
+            } catch (err) { 
+                tampilkanNotifikasi("Gagal simpan database!", "error"); 
+            } 
+            finally { 
+                btn.innerText = "KIRIM TOP UP"; btn.disabled = false; 
+            }
+
+        }
+
+        // INIT LOAD
+        updateTampilanKeranjang(); 
         ambilDataMenu();
-        
-        // ... (Sertakan seluruh sisa script fungsi asli Anda disini)
+        cekStatusWarungDB(); // Mengambil status buka/tutup warung saat halaman dimuat
     </script>
+
+
 </body>
 </html>
