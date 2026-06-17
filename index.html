@@ -761,8 +761,9 @@
             btn.innerText = "MEMPROSES..."; btn.disabled = true;
 
             try {
+                // DI SINI SAYA MASUKKAN NAMA PEMBELI AGAR TIDAK ANONIM DI PUSHOVER
                 const { data, error } = await clientDB.from('pesanan_pulsa').insert([{
-                    nama_produk: namaProdukTerpilih, sku_code: skuCodeTerpilih, nomor_tujuan: noHp, harga_jual: hargaJualTerpilih, status: 'pending'
+                    nama_pembeli: namaPelanggan, nama_produk: namaProdukTerpilih, sku_code: skuCodeTerpilih, nomor_tujuan: noHp, harga_jual: hargaJualTerpilih, status: 'pending'
                 }]).select();
 
                 if (error || !data) throw error;
@@ -802,7 +803,6 @@
         ambilDataMenu();
         cekStatusWarungDB(); // Mengambil status buka/tutup warung saat halaman dimuat
     </script>
-
 
 </body>
 </html>
