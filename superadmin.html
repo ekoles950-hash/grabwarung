@@ -6,39 +6,31 @@
     <title>SUPER ADMIN DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>body { background-color: #0F172A; color: white; font-family: sans-serif; }</style>
 </head>
-<body class="p-4">
+<body class="bg-[#0F172A] text-white p-4">
 
     <!-- MENU TAB -->
-    <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-        <button onclick="tampilPanel('panel-data')" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap">DATA PELANGGAN</button>
-        <button onclick="tampilPanel('panel-order')" class="bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap">ADMIN ORDER</button>
-        <button onclick="tampilPanel('panel-topup')" class="bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap">TOP UP & PULSA</button>
+    <div class="flex gap-2 mb-6">
+        <button onclick="tampilPanel('panel-data')" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold">PELANGGAN</button>
+        <button onclick="tampilPanel('panel-topup')" class="bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold">TOP UP</button>
     </div>
 
-    <!-- PANEL DATA PELANGGAN -->
+    <!-- PANEL PELANGGAN -->
     <div id="panel-data" class="panel bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-        <h2 class="font-black mb-4">Data Pelanggan</h2>
-        <div id="tabel-pelanggan" class="text-sm">Memuat...</div>
+        <h2 class="font-black mb-4">Edit Hutang Pelanggan</h2>
+        <div id="tabel-pelanggan" class="text-sm space-y-3">Memuat...</div>
     </div>
 
-    <!-- PANEL ADMIN ORDER (Hidden by default) -->
-    <div id="panel-order" class="panel hidden bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-        <h2 class="font-black mb-4">Admin Order</h2>
-        <div id="tabel-order">Isi fitur Admin Order di sini...</div>
-    </div>
-
-    <!-- PANEL TOP UP (Hidden by default) -->
+    <!-- PANEL TOP UP -->
     <div id="panel-topup" class="panel hidden bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-        <h2 class="font-black mb-4">Monitoring Top Up</h2>
-        <div id="tabel-topup">Isi fitur Top Up & Pulsa di sini...</div>
+        <h2 class="font-black mb-4">Antrean Top Up</h2>
+        <div id="tabel-topup" class="text-sm">Silakan pasang kode monitoring Anda di sini...</div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://butydxuauhtvwojvpixt.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X';
-        const clientDB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         function tampilPanel(id) {
             document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
@@ -46,12 +38,25 @@
         }
 
         async function muatDataPelanggan() {
-            const { data } = await clientDB.from('pelanggan').select('*');
-            let html = '<table class="w-full text-left"><tr><th>Nama</th><th>Saldo</th><th>Hutang</th></tr>';
+            const { data } = await sb.from('pelanggan').select('*');
+            let html = '';
             data.forEach(p => {
-                html += `<tr><td>${p.nama}</td><td>Rp ${parseInt(p.saldo).toLocaleString()}</td><td class="text-red-400">Rp ${parseInt(p.hutang || p['Total hutang'] || 0).toLocaleString()}</td></tr>`;
+                html += `<div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                    <div><div class="font-bold">${p.nama}</div><div class="text-xs text-red-400">Hutang: Rp ${parseInt(p.hutang || 0).toLocaleString()}</div></div>
+                    <div class="flex gap-2">
+                        <button onclick="updateHutang('${p.nama}', 20000)" class="bg-slate-600 px-2 py-1 rounded text-[10px]">20K</button>
+                        <button onclick="updateHutang('${p.nama}', 50000)" class="bg-slate-600 px-2 py-1 rounded text-[10px]">50K</button>
+                        <button onclick="updateHutang('${p.nama}', 0)" class="bg-red-600 px-2 py-1 rounded text-[10px]">LUNAS</button>
+                    </div>
+                </div>`;
             });
-            document.getElementById('tabel-pelanggan').innerHTML = html + '</table>';
+            document.getElementById('tabel-pelanggan').innerHTML = html;
+        }
+
+        async function updateHutang(nama, jumlah) {
+            if(!confirm(`Ubah hutang ${nama} jadi Rp ${jumlah.toLocaleString()}?`)) return;
+            await sb.from('pelanggan').update({ hutang: jumlah }).eq('nama', nama);
+            muatDataPelanggan();
         }
 
         muatDataPelanggan();
