@@ -78,21 +78,30 @@
         <div class="p-4 bg-stone-50 min-h-screen" id="halaman-beranda">
             
             <!-- Tampilan Dashboard Akun (Light Mode Beranda) -->
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-stone-200 mb-4 flex justify-between items-center text-xs">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 bg-amber-500/10 rounded-full flex items-center justify-center text-base">👤</div>
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-stone-200 mb-4 flex justify-between items-center text-xs">
+                <!-- Profil Kiri -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <div class="w-8 h-8 bg-amber-500/10 rounded-full flex items-center justify-center text-base">👤</div>
                     <div class="flex flex-col">
-                        <span class="text-stone-400 text-[9px] uppercase tracking-wider font-bold">Pelanggan</span>
-                        <span id="lbl-nama-beranda" class="text-stone-800 font-extrabold text-sm">-</span>
+                        <span class="text-stone-400 text-[8px] uppercase tracking-wider font-bold">Pelanggan</span>
+                        <span id="lbl-nama-beranda" class="text-stone-800 font-extrabold text-sm truncate max-w-[60px]">-</span>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center">
-                    <div class="bg-amber-600/5 border border-amber-600/10 px-2.5 py-1.5 rounded-xl text-right relative flex flex-col items-end">
+                
+                <!-- Hutang Tengah -->
+                <div class="flex flex-col items-center justify-center bg-red-50 px-2 py-1.5 rounded-xl border border-red-100 shadow-sm shrink-0">
+                    <span class="text-[8px] text-red-400 font-bold uppercase tracking-wider">Hutang</span>
+                    <span id="lbl-hutang-beranda" class="text-red-600 font-black text-xs">Rp 0</span>
+                </div>
+
+                <!-- Saldo Koin Kanan -->
+                <div class="flex gap-1.5 items-center shrink-0">
+                    <div class="bg-amber-600/5 border border-amber-600/10 px-2 py-1.5 rounded-xl text-right relative flex flex-col items-end">
                         <span class="block text-[8px] text-stone-400 font-bold uppercase tracking-wider">Saldo</span>
                         <span id="lbl-saldo-beranda" class="text-[#d97706] font-black text-xs block">Rp 0</span>
-                        <button onclick="bukaModalIsiSaldo()" class="text-[8px] font-black bg-[#d97706] text-white px-1.5 py-0.5 rounded mt-0.5 tracking-wider hover:bg-amber-700 transition">┼ ISI</button>
+                        <button onclick="bukaModalIsiSaldo()" class="text-[8px] font-black bg-[#d97706] text-white px-1 py-0.5 rounded mt-0.5 tracking-wider hover:bg-amber-700 transition">┼ ISI</button>
                     </div>
-                    <div class="bg-emerald-600/5 border border-emerald-600/10 px-2.5 py-3 rounded-xl text-right">
+                    <div class="bg-emerald-600/5 border border-emerald-600/10 px-2 py-3 rounded-xl text-center">
                         <span class="block text-[8px] text-stone-400 font-bold uppercase tracking-wider">Koin</span>
                         <span id="lbl-koin-beranda" class="text-emerald-600 font-black text-xs">0</span>
                     </div>
@@ -108,21 +117,30 @@
         <div class="bg-[#0F172A] min-h-screen flex-col items-center p-4 pt-8 pb-24 hidden" id="halaman-topup">
             
             <!-- Tampilan Dashboard Akun (Dark Mode Top Up) -->
-            <div class="w-full bg-[#1E293B] p-4 rounded-2xl border border-slate-800/80 mb-4 flex justify-between items-center text-xs">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 bg-blue-500/10 rounded-full flex items-center justify-center text-base">👤</div>
+            <div class="w-full bg-[#1E293B] p-3 rounded-2xl border border-slate-800/80 mb-4 flex justify-between items-center text-xs">
+                <!-- Profil Kiri -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <div class="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-base">👤</div>
                     <div class="flex flex-col">
-                        <span class="text-slate-400 text-[9px] uppercase tracking-wider font-bold">Pelanggan</span>
-                        <span id="lbl-nama-topup" class="text-white font-extrabold text-sm">-</span>
+                        <span class="text-slate-400 text-[8px] uppercase tracking-wider font-bold">Pelanggan</span>
+                        <span id="lbl-nama-topup" class="text-white font-extrabold text-sm truncate max-w-[60px]">-</span>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center">
-                    <div class="bg-blue-500/5 border border-blue-500/10 px-2.5 py-1.5 rounded-xl text-right flex flex-col items-end">
+
+                <!-- Hutang Tengah -->
+                <div class="flex flex-col items-center justify-center bg-red-500/10 px-2 py-1.5 rounded-xl border border-red-500/20 shadow-sm shrink-0">
+                    <span class="text-[8px] text-red-400 font-bold uppercase tracking-wider">Hutang</span>
+                    <span id="lbl-hutang-topup" class="text-red-500 font-black text-xs">Rp 0</span>
+                </div>
+
+                <!-- Saldo Koin Kanan -->
+                <div class="flex gap-1.5 items-center shrink-0">
+                    <div class="bg-blue-500/5 border border-blue-500/10 px-2 py-1.5 rounded-xl text-right flex flex-col items-end">
                         <span class="block text-[8px] text-slate-400 font-bold uppercase tracking-wider">Saldo</span>
                         <span id="lbl-saldo-topup" class="text-blue-400 font-black text-xs block">Rp 0</span>
-                        <button onclick="bukaModalIsiSaldo()" class="text-[8px] font-black bg-blue-500 text-white px-1.5 py-0.5 rounded mt-0.5 tracking-wider hover:bg-blue-600 transition">┼ ISI</button>
+                        <button onclick="bukaModalIsiSaldo()" class="text-[8px] font-black bg-blue-500 text-white px-1 py-0.5 rounded mt-0.5 tracking-wider hover:bg-blue-600 transition">┼ ISI</button>
                     </div>
-                    <div class="bg-emerald-500/5 border border-emerald-500/10 px-2.5 py-3 rounded-xl text-right">
+                    <div class="bg-emerald-500/5 border border-emerald-500/10 px-2 py-3 rounded-xl text-center">
                         <span class="block text-[8px] text-slate-400 font-bold uppercase tracking-wider">Koin</span>
                         <span id="lbl-koin-topup" class="text-emerald-400 font-black text-xs">0</span>
                     </div>
@@ -428,7 +446,7 @@
 
         // VARIABEL INDENTITAS USER & HUTANG
         let loggedInUser = localStorage.getItem('namaPelangganBasecamp') || null;
-        let hutangPelanggan = 0; // Tambahan variabel pencatat hutang
+        let hutangPelanggan = 0;
 
         // VARIABEL WARUNG KOPI
         let keranjang = JSON.parse(localStorage.getItem('keranjangWarungBasecamp')) || [];
@@ -504,13 +522,15 @@
                     document.getElementById('lbl-saldo-topup').innerText = `Rp ${data.saldo.toLocaleString('id-ID')}`;
                     document.getElementById('lbl-koin-topup').innerText = data.koin;
 
+                    // Tampilkan Hutang di Tengah
+                    hutangPelanggan = data.hutang || 0; 
+                    document.getElementById('lbl-hutang-beranda').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
+                    document.getElementById('lbl-hutang-topup').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
+
                     document.getElementById('nama_pelanggan_topup').value = data.nama;
                     document.getElementById('nama_pelanggan_topup').readOnly = true;
                     document.getElementById('nama-pemesan').value = data.nama;
                     document.getElementById('nama-pemesan').readOnly = true;
-
-                    // Mengambil data Hutang yang ditarik dari Supabase
-                    hutangPelanggan = data.hutang || 0; 
                 }
             } catch (e) {}
         }
@@ -721,8 +741,10 @@
                      document.getElementById('lbl-saldo-topup').innerText = `Rp ${payload.new.saldo.toLocaleString('id-ID')}`;
                      document.getElementById('lbl-koin-topup').innerText = payload.new.koin;
                      
-                     // Tangkap update nilai hutang secara real-time
+                     // Update Hutang Real-time di Tengah
                      hutangPelanggan = payload.new.hutang || 0;
+                     document.getElementById('lbl-hutang-beranda').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
+                     document.getElementById('lbl-hutang-topup').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
                  }
             }).subscribe();
 
@@ -1053,12 +1075,8 @@
 
                 // Menampilkan rincian hutang (jika ada) di Modal Bayar Top Up
                 const hutangContainer = document.getElementById('pop-hutang-container');
-                if (hutangPelanggan > 0) {
-                    hutangContainer.classList.remove('hidden');
-                    document.getElementById('pop-hutang-anda').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
-                } else {
-                    hutangContainer.classList.add('hidden');
-                }
+                hutangContainer.classList.remove('hidden');
+                document.getElementById('pop-hutang-anda').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
 
                 document.getElementById('modal-pembayaran-topup').classList.remove('hidden');
             } catch (err) {
