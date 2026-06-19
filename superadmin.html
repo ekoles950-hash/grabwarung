@@ -1,65 +1,56 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUPER ADMIN DASHBOARD</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="bg-[#0F172A] text-white p-4">
+<!-- GANTI BAGIAN PANEL PELANGGAN DENGAN INI -->
+<div id="panel-data" class="panel bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
+    <h2 class="font-black mb-4">Edit Hutang Manual</h2>
+    <div id="tabel-pelanggan" class="text-sm space-y-4">Memuat...</div>
+</div>
 
-    <!-- MENU TAB -->
-    <div class="flex gap-2 mb-6">
-        <button onclick="tampilPanel('panel-data')" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold">PELANGGAN</button>
-        <button onclick="tampilPanel('panel-topup')" class="bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold">TOP UP</button>
-    </div>
+<!-- GANTI BAGIAN PANEL TOP UP DENGAN INI -->
+<div id="panel-topup" class="panel hidden bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
+    <h2 class="font-black mb-4">Antrean Top Up</h2>
+    <div id="tabel-topup" class="text-xs space-y-2">Memuat antrean...</div>
+</div>
 
-    <!-- PANEL PELANGGAN -->
-    <div id="panel-data" class="panel bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-        <h2 class="font-black mb-4">Edit Hutang Pelanggan</h2>
-        <div id="tabel-pelanggan" class="text-sm space-y-3">Memuat...</div>
-    </div>
-
-    <!-- PANEL TOP UP -->
-    <div id="panel-topup" class="panel hidden bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-        <h2 class="font-black mb-4">Antrean Top Up</h2>
-        <div id="tabel-topup" class="text-sm">Silakan pasang kode monitoring Anda di sini...</div>
-    </div>
-
-    <script>
-        const SUPABASE_URL = 'https://butydxuauhtvwojvpixt.supabase.co'; 
-        const SUPABASE_KEY = 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        function tampilPanel(id) {
-            document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        async function muatDataPelanggan() {
-            const { data } = await sb.from('pelanggan').select('*');
-            let html = '';
-            data.forEach(p => {
-                html += `<div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                    <div><div class="font-bold">${p.nama}</div><div class="text-xs text-red-400">Hutang: Rp ${parseInt(p.hutang || 0).toLocaleString()}</div></div>
-                    <div class="flex gap-2">
-                        <button onclick="updateHutang('${p.nama}', 20000)" class="bg-slate-600 px-2 py-1 rounded text-[10px]">20K</button>
-                        <button onclick="updateHutang('${p.nama}', 50000)" class="bg-slate-600 px-2 py-1 rounded text-[10px]">50K</button>
-                        <button onclick="updateHutang('${p.nama}', 0)" class="bg-red-600 px-2 py-1 rounded text-[10px]">LUNAS</button>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('tabel-pelanggan').innerHTML = html;
-        }
-
-        async function updateHutang(nama, jumlah) {
-            if(!confirm(`Ubah hutang ${nama} jadi Rp ${jumlah.toLocaleString()}?`)) return;
-            await sb.from('pelanggan').update({ hutang: jumlah }).eq('nama', nama);
-            muatDataPelanggan();
-        }
-
+<script>
+    // FUNGSI UPDATE HUTANG MANUAL
+    async function updateHutang(nama) {
+        const inputVal = document.getElementById('input-' + nama).value;
+        const jumlah = parseInt(inputVal);
+        if(isNaN(jumlah)) return alert("Masukkan angka yang benar!");
+        if(!confirm(`Ubah hutang ${nama} jadi Rp ${jumlah.toLocaleString()}?`)) return;
+        await sb.from('pelanggan').update({ hutang: jumlah }).eq('nama', nama);
         muatDataPelanggan();
-    </script>
-</body>
-</html>
+    }
+
+    // TAMPIL PELANGGAN DENGAN INPUT MANUAL
+    async function muatDataPelanggan() {
+        const { data } = await sb.from('pelanggan').select('*');
+        let html = '';
+        data.forEach(p => {
+            html += `<div class="bg-slate-800 p-3 rounded-xl flex flex-col gap-2">
+                <div class="font-bold">${p.nama} (Hutang: Rp ${parseInt(p.hutang || 0).toLocaleString()})</div>
+                <div class="flex gap-2">
+                    <input type="number" id="input-${p.nama}" class="w-full bg-slate-700 p-2 rounded text-white text-xs" placeholder="Input manual...">
+                    <button onclick="updateHutang('${p.nama}')" class="bg-blue-600 px-3 rounded text-xs font-bold">SAVE</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('tabel-pelanggan').innerHTML = html;
+    }
+
+    // MONITORING TOP UP OTOMATIS
+    async function muatDataTopUp() {
+        const { data } = await sb.from('topup_saldo').select('*').eq('status', 'Pending');
+        let html = '';
+        data.forEach(t => {
+            html += `<div class="flex justify-between p-2 border-b border-slate-700">
+                <span>${t.nama_pelanggan} - Rp ${t.nominal.toLocaleString()}</span>
+                <button onclick="approve('${t.id}')" class="text-green-400 font-bold text-xs">APPROVE</button>
+            </div>`;
+        });
+        document.getElementById('tabel-topup').innerHTML = html || "Tidak ada antrean.";
+    }
+
+    // Panggil kedua fungsi saat halaman dibuka
+    muatDataPelanggan();
+    muatDataTopUp();
+</script>
