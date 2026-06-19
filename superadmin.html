@@ -1,56 +1,89 @@
-<!-- GANTI BAGIAN PANEL PELANGGAN DENGAN INI -->
-<div id="panel-data" class="panel bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-    <h2 class="font-black mb-4">Edit Hutang Manual</h2>
-    <div id="tabel-pelanggan" class="text-sm space-y-4">Memuat...</div>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Super Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #0F172A; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
+        .card { background: #1E293B; border: 1px solid #334155; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        .btn-menu { background: #334155; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 12px; }
+        .btn-save { background: #2563EB; padding: 5px 10px; border-radius: 5px; font-size: 11px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
 
-<!-- GANTI BAGIAN PANEL TOP UP DENGAN INI -->
-<div id="panel-topup" class="panel hidden bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
-    <h2 class="font-black mb-4">Antrean Top Up</h2>
-    <div id="tabel-topup" class="text-xs space-y-2">Memuat antrean...</div>
-</div>
+    <div class="flex gap-2 mb-6">
+        <button onclick="tampilPanel('panel-data')" class="btn-menu">PELANGGAN</button>
+        <button onclick="tampilPanel('panel-topup')" class="btn-menu">TOP UP</button>
+    </div>
 
-<script>
-    // FUNGSI UPDATE HUTANG MANUAL
-    async function updateHutang(nama) {
-        const inputVal = document.getElementById('input-' + nama).value;
-        const jumlah = parseInt(inputVal);
-        if(isNaN(jumlah)) return alert("Masukkan angka yang benar!");
-        if(!confirm(`Ubah hutang ${nama} jadi Rp ${jumlah.toLocaleString()}?`)) return;
-        await sb.from('pelanggan').update({ hutang: jumlah }).eq('nama', nama);
+    <div id="panel-data" class="panel">
+        <h2 class="font-black mb-4">Edit Hutang Manual</h2>
+        <div id="tabel-pelanggan" class="space-y-3">Memuat data...</div>
+    </div>
+
+    <div id="panel-topup" class="panel hidden">
+        <h2 class="font-black mb-4">Antrean Top Up</h2>
+        <div id="tabel-topup" class="space-y-3">Memuat antrean...</div>
+    </div>
+
+    <script>
+        const sb = supabase.createClient('https://butydxuauhtvwojvpixt.supabase.co', 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X');
+
+        function tampilPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        // AMBIL DATA PELANGGAN
+        async function muatDataPelanggan() {
+            const { data } = await sb.from('pelanggan').select('*');
+            let html = '';
+            data.forEach(p => {
+                let h = parseInt(p.hutang || 0);
+                html += `<div class="card">
+                    <div class="mb-2"><strong>${p.nama}</strong><br><small class="text-red-400">Hutang: Rp ${h.toLocaleString()}</small></div>
+                    <div class="flex gap-2">
+                        <input type="number" id="input-${p.nama}" class="bg-slate-700 w-full p-2 rounded text-xs" placeholder="Input Rupiah...">
+                        <button onclick="updateHutang('${p.nama}')" class="btn-save">SIMPAN</button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('tabel-pelanggan').innerHTML = html;
+        }
+
+        // AMBIL DATA TOP UP (ANTREAN)
+        async function muatDataTopUp() {
+            const { data } = await sb.from('topup_saldo').select('*').eq('status', 'Pending');
+            let html = '';
+            if(data && data.length > 0) {
+                data.forEach(t => {
+                    html += `<div class="card flex justify-between items-center">
+                        <div><div class="font-bold text-xs">${t.nama_pelanggan}</div><div class="text-[10px] text-blue-400">Rp ${t.nominal.toLocaleString()}</div></div>
+                        <button onclick="approve('${t.id}')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">APPROVE</button>
+                    </div>`;
+                });
+            } else { html = "Tidak ada antrean."; }
+            document.getElementById('tabel-topup').innerHTML = html;
+        }
+
+        async function updateHutang(nama) {
+            const val = document.getElementById('input-' + nama).value;
+            if(!val) return alert("Isi angkanya!");
+            await sb.from('pelanggan').update({ hutang: parseInt(val) }).eq('nama', nama);
+            alert("Berhasil!"); muatDataPelanggan();
+        }
+
+        async function approve(id) {
+            await sb.from('topup_saldo').update({ status: 'success' }).eq('id', id);
+            muatDataTopUp();
+        }
+
         muatDataPelanggan();
-    }
-
-    // TAMPIL PELANGGAN DENGAN INPUT MANUAL
-    async function muatDataPelanggan() {
-        const { data } = await sb.from('pelanggan').select('*');
-        let html = '';
-        data.forEach(p => {
-            html += `<div class="bg-slate-800 p-3 rounded-xl flex flex-col gap-2">
-                <div class="font-bold">${p.nama} (Hutang: Rp ${parseInt(p.hutang || 0).toLocaleString()})</div>
-                <div class="flex gap-2">
-                    <input type="number" id="input-${p.nama}" class="w-full bg-slate-700 p-2 rounded text-white text-xs" placeholder="Input manual...">
-                    <button onclick="updateHutang('${p.nama}')" class="bg-blue-600 px-3 rounded text-xs font-bold">SAVE</button>
-                </div>
-            </div>`;
-        });
-        document.getElementById('tabel-pelanggan').innerHTML = html;
-    }
-
-    // MONITORING TOP UP OTOMATIS
-    async function muatDataTopUp() {
-        const { data } = await sb.from('topup_saldo').select('*').eq('status', 'Pending');
-        let html = '';
-        data.forEach(t => {
-            html += `<div class="flex justify-between p-2 border-b border-slate-700">
-                <span>${t.nama_pelanggan} - Rp ${t.nominal.toLocaleString()}</span>
-                <button onclick="approve('${t.id}')" class="text-green-400 font-bold text-xs">APPROVE</button>
-            </div>`;
-        });
-        document.getElementById('tabel-topup').innerHTML = html || "Tidak ada antrean.";
-    }
-
-    // Panggil kedua fungsi saat halaman dibuka
-    muatDataPelanggan();
-    muatDataTopUp();
-</script>
+        muatDataTopUp();
+    </script>
+</body>
+</html>
