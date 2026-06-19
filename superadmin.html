@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Super Admin - Basecamp Coffee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0F172A; color: white; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .tab-btn { transition: all 0.3s ease; }
+        .tab-btn.active { background-color: #3B82F6; color: white; border-color: #3B82F6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .input-dark { background-color: #1E293B; border: 1px solid #334155; color: white; }
+        .input-dark:focus { border-color: #3B82F6; outline: none; }
+    </style>
+</head>
+<body class="pb-10">
+
+    <div id="halaman-login" class="fixed inset-0 bg-[#0F172A] z-[200] flex justify-center items-center p-5">
+        <div class="bg-[#1E293B] w-full max-w-sm rounded-[2rem] p-8 shadow-2xl border border-slate-800 text-center">
+            <h1 class="text-2xl font-black text-blue-500 mb-2 italic tracking-wide">SUPER ADMIN</h1>
+            <p class="text-slate-400 text-xs mb-6 font-medium">Masukkan PIN rahasia untuk masuk ke panel monitoring</p>
+            <input type="password" id="input-pin" class="w-full p-4 rounded-xl input-dark text-center text-2xl tracking-[0.5em] font-bold mb-5" placeholder="••••">
+            <button onclick="verifikasiLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95">
+                MASUK DASHBOARD
+            </button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[100] transition-all duration-300 pointer-events-none w-[90%] max-w-sm">
+        <div id="toast-content" class="px-6 py-3 rounded-full shadow-2xl text-sm font-bold text-white flex items-center justify-center gap-2"></div>
+    </div>
+
+    <div id="dashboard-utama" class="max-w-md mx-auto hidden min-h-screen relative">
+        
+        <div class="sticky top-0 bg-[#0F172A] z-50 pt-4 px-4 pb-2 border-b border-slate-800 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-xl font-black italic tracking-wider">BASECAMP<span class="text-blue-500">ADMIN</span></h1>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Online</span>
+                </div>
+            </div>
+            
+            <div class="flex gap-2 overflow-x-auto hide-scroll pb-2">
+                <button onclick="bukaTab('tab-warung', this)" class="tab-btn active shrink-0 px-4 py-2 rounded-full border border-slate-700 text-xs font-bold text-slate-300">☕ Warung</button>
+                <button onclick="bukaTab('tab-pulsa', this)" class="tab-btn shrink-0 px-4 py-2 rounded-full border border-slate-700 text-xs font-bold text-slate-300">📱 Pulsa & E-Wallet</button>
+                <button onclick="bukaTab('tab-deposit', this)" class="tab-btn shrink-0 px-4 py-2 rounded-full border border-slate-700 text-xs font-bold text-slate-300">💰 Isi Saldo</button>
+                <button onclick="bukaTab('tab-pelanggan', this)" class="tab-btn shrink-0 px-4 py-2 rounded-full border border-red-900/50 bg-red-500/10 text-red-400 text-xs font-bold">⚠️ Kelola Hutang</button>
+            </div>
+        </div>
+
+        <div id="tab-warung" class="tab-content active p-4 space-y-4">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-black text-sm text-slate-300 uppercase tracking-wider">Orderan Warung Kopi</h2>
+                <button onclick="loadPesananWarung()" class="text-[10px] text-blue-400 font-bold hover:text-white">🔄 Refresh</button>
+            </div>
+            <div id="container-warung" class="space-y-3">
+                <div class="text-center text-slate-500 text-sm py-10">Memuat data...</div>
+            </div>
+        </div>
+
+        <div id="tab-pulsa" class="tab-content p-4 space-y-4">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-black text-sm text-slate-300 uppercase tracking-wider">Antrean Top Up E-Wallet</h2>
+                <button onclick="loadPesananPulsa()" class="text-[10px] text-blue-400 font-bold hover:text-white">🔄 Refresh</button>
+            </div>
+            <div id="container-pulsa" class="space-y-3"></div>
+        </div>
+
+        <div id="tab-deposit" class="tab-content p-4 space-y-4">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-black text-sm text-slate-300 uppercase tracking-wider">Request Isi Saldo Aplikasi</h2>
+                <button onclick="loadTopUpSaldo()" class="text-[10px] text-blue-400 font-bold hover:text-white">🔄 Refresh</button>
+            </div>
+            <div class="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl mb-4">
+                <p class="text-[10px] text-slate-300 leading-relaxed"><span class="font-bold text-white">Info:</span> Jika di-Klik "Sukses", saldo akan otomatis bertambah ke akun pelanggan di aplikasi mereka.</p>
+            </div>
+            <div id="container-deposit" class="space-y-3"></div>
+        </div>
+
+        <div id="tab-pelanggan" class="tab-content p-4 space-y-4">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-black text-sm text-red-400 uppercase tracking-wider">Data Hutang Pelanggan</h2>
+                <button onclick="loadPelanggan()" class="text-[10px] text-blue-400 font-bold hover:text-white">🔄 Refresh</button>
+            </div>
+            <div class="bg-red-500/10 border border-red-500/20 p-3 rounded-xl mb-4">
+                <p class="text-[10px] text-slate-300 leading-relaxed"><span class="font-bold text-white">Peringatan:</span> Jika hutang diubah menjadi ≥ 100.000, pelanggan tidak akan bisa melakukan transaksi Top Up.</p>
+            </div>
+            <input type="text" id="cari-pelanggan" onkeyup="filterPelanggan()" placeholder="Cari nama pelanggan..." class="w-full p-3 rounded-xl input-dark text-sm font-bold mb-2">
+            <div id="container-pelanggan" class="space-y-3"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // ================= KONFIGURASI =================
+        const PIN_ADMIN = '1234'; // <- PIN UNTUK MASUK
+        
+        const SUPABASE_URL = 'https://butydxuauhtvwojvpixt.supabase.co'; 
+        const SUPABASE_KEY = 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ================= KONTROL UI DASAR =================
+        function tampilkanNotifikasi(pesan, tipe = 'sukses') {
+            const toast = document.getElementById('toast');
+            const toastContent = document.getElementById('toast-content');
+            toastContent.className = tipe === 'sukses' ? 'px-6 py-3 rounded-full shadow-lg text-sm font-bold text-white flex items-center justify-center gap-2 bg-green-500 w-full' : 'px-6 py-3 rounded-full shadow-lg text-sm font-bold text-white flex items-center justify-center gap-2 bg-red-500 w-full';
+            toastContent.innerHTML = `<span>${pesan}</span>`;
+            toast.classList.remove('-translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('-translate-y-24', 'opacity-0'); }, 3000);
+        }
+
+        function verifikasiLogin() {
+            const input = document.getElementById('input-pin').value;
+            if (input === PIN_ADMIN) {
+                document.getElementById('halaman-login').classList.add('hidden');
+                document.getElementById('dashboard-utama').classList.remove('hidden');
+                tampilkanNotifikasi("Selamat datang Admin!");
+                loadSemuaData();
+                setupRealtimeListeners();
+            } else {
+                tampilkanNotifikasi("PIN Salah!", "error");
+                document.getElementById('input-pin').value = '';
+            }
+        }
+
+        document.getElementById('input-pin').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') verifikasiLogin();
+        });
+
+        function bukaTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        function loadSemuaData() {
+            loadPesananWarung();
+            loadPesananPulsa();
+            loadTopUpSaldo();
+            loadPelanggan();
+        }
+
+        function setupRealtimeListeners() {
+            supabase.channel('admin-room')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'pesanan_warung' }, loadPesananWarung)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'pesanan_pulsa' }, loadPesananPulsa)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'topup_saldo' }, loadTopUpSaldo)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'pelanggan' }, loadPelanggan)
+                .subscribe();
+        }
+
+        // ================= TAB 1: PESANAN WARUNG =================
+        async function loadPesananWarung() {
+            const container = document.getElementById('container-warung');
+            const { data, error } = await supabase.from('pesanan_warung').select('*').neq('status', 'Selesai').order('id', { ascending: false });
+            
+            if (error) { container.innerHTML = `<div class="text-red-400 text-center text-xs">Gagal memuat data</div>`; return; }
+            if (!data || data.length === 0) { container.innerHTML = `<div class="text-slate-500 text-center text-xs py-6">Tidak ada orderan aktif</div>`; return; }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                let detailPesananHTML = '';
+                try {
+                    const detail = typeof item.detail_pesanan === 'string' ? JSON.parse(item.detail_pesanan) : item.detail_pesanan;
+                    if(Array.isArray(detail)) {
+                        detailPesananHTML = detail.map(d => `<div class="text-slate-300 text-sm font-bold">• ${d.jumlah}x ${d.nama}</div>`).join('');
+                    } else { detailPesananHTML = `<div class="text-slate-300 text-sm font-bold">${item.detail_pesanan}</div>`; }
+                } catch(e) { detailPesananHTML = `<div class="text-slate-300 text-sm font-bold">${item.detail_pesanan}</div>`; }
+
+                const bgColor = item.status === 'Pending' ? 'border-amber-500/50 bg-amber-900/10' : 'border-blue-500/50 bg-blue-900/10';
+                const statusBadge = `<span class="px-2 py-1 bg-slate-800 rounded text-[9px] font-black uppercase text-slate-300 ml-2">${item.status}</span>`;
+
+                container.innerHTML += `
+                    <div class="p-4 rounded-2xl border ${bgColor} shadow-lg relative">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-black text-white text-base">${item.nama_pemesan} ${statusBadge}</h3>
+                            </div>
+                            <span class="font-black text-[#d97706] text-sm">Rp ${item.total_harga.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="mb-4 bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                            ${detailPesananHTML}
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="updateStatusWarung(${item.id}, 'Diproses')" class="py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md">👨‍🍳 Proses</button>
+                            <button onclick="updateStatusWarung(${item.id}, 'Dikirim')" class="py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md">🛵 Kirim</button>
+                            <button onclick="updateStatusWarung(${item.id}, 'Selesai')" class="py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md">✅ Selesai</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        async function updateStatusWarung(id, statusBaru) {
+            await supabase.from('pesanan_warung').update({ status: statusBaru }).eq('id', id);
+            tampilkanNotifikasi(`Status diubah jadi ${statusBaru}`);
+            loadPesananWarung();
+        }
+
+        // ================= TAB 2: PESANAN PULSA/E-WALLET =================
+        async function loadPesananPulsa() {
+            const container = document.getElementById('container-pulsa');
+            const { data, error } = await supabase.from('pesanan_pulsa').select('*').eq('status', 'pending').order('id', { ascending: false });
+            
+            if (error) { container.innerHTML = `<div class="text-red-400 text-center text-xs">Gagal memuat data</div>`; return; }
+            if (!data || data.length === 0) { container.innerHTML = `<div class="text-slate-500 text-center text-xs py-6">Antrean Kosong</div>`; return; }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                const waktu = new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                container.innerHTML += `
+                    <div class="p-4 rounded-2xl border border-slate-700 bg-[#1E293B] shadow-lg flex justify-between items-center">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${waktu} WIB | ${item.sku_code}</span>
+                            <span class="font-black text-white text-sm">${item.nama_produk}</span>
+                            <span class="text-xs font-mono text-blue-400 font-bold">${item.nomor_tujuan}</span>
+                            <span class="text-[10px] text-slate-300 mt-1">Oleh: <strong class="text-white">${item.nama_pembeli}</strong></span>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                            <span class="font-black text-amber-500 text-sm">Rp ${item.harga_jual.toLocaleString('id-ID')}</span>
+                            <div class="flex gap-2">
+                                <button onclick="updateStatusPulsa(${item.id}, 'gagal')" class="px-3 py-1.5 rounded-lg bg-red-900/50 text-red-400 hover:bg-red-600 hover:text-white font-bold text-[10px] uppercase border border-red-800">Tolak</button>
+                                <button onclick="updateStatusPulsa(${item.id}, 'success')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] uppercase shadow-md">✅ Sukses</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        async function updateStatusPulsa(id, statusBaru) {
+            await supabase.from('pesanan_pulsa').update({ status: statusBaru }).eq('id', id);
+            tampilkanNotifikasi(statusBaru === 'success' ? "Top Up Diselesaikan!" : "Top Up Dibatalkan");
+            loadPesananPulsa();
+        }
+
+        // ================= TAB 3: APPROVAL DEPOSIT SALDO =================
+        async function loadTopUpSaldo() {
+            const container = document.getElementById('container-deposit');
+            const { data, error } = await supabase.from('topup_saldo').select('*').eq('status', 'Pending').order('id', { ascending: false });
+            
+            if (error) { container.innerHTML = `<div class="text-red-400 text-center text-xs">Gagal memuat data</div>`; return; }
+            if (!data || data.length === 0) { container.innerHTML = `<div class="text-slate-500 text-center text-xs py-6">Tidak ada request masuk</div>`; return; }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                const waktu = new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                container.innerHTML += `
+                    <div class="p-4 rounded-2xl border border-slate-700 bg-[#1E293B] shadow-lg flex justify-between items-center">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 bg-blue-900 text-blue-300 text-[8px] font-black uppercase border border-blue-700 rounded">${item.metode_bayar}</span>
+                                <span class="text-[9px] text-slate-400 font-bold">${waktu} WIB</span>
+                            </div>
+                            <span class="font-black text-white text-base mt-1">${item.nama_pelanggan}</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                            <span class="font-black text-emerald-400 text-base">Rp ${item.nominal.toLocaleString('id-ID')}</span>
+                            <div class="flex gap-2 mt-1">
+                                <button onclick="tolakDeposit(${item.id})" class="px-3 py-1.5 rounded-lg bg-red-900/50 text-red-400 hover:bg-red-600 hover:text-white font-bold text-[10px] uppercase border border-red-800">Tolak</button>
+                                <button onclick="approveDeposit(${item.id}, '${item.nama_pelanggan.replace(/'/g, "\\'")}', ${item.nominal})" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] uppercase shadow-md">✅ Approve</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        async function tolakDeposit(id) {
+            await supabase.from('topup_saldo').update({ status: 'Gagal' }).eq('id', id);
+            tampilkanNotifikasi("Request deposit ditolak", "error");
+            loadTopUpSaldo();
+        }
+
+        async function approveDeposit(idTopup, namaPelanggan, nominal) {
+            try {
+                // 1. Ambil saldo saat ini
+                const { data: user } = await supabase.from('pelanggan').select('saldo').eq('nama', namaPelanggan).single();
+                let saldoSekarang = user ? user.saldo : 0;
+                let saldoBaru = saldoSekarang + nominal;
+
+                // 2. Tambahkan saldo
+                await supabase.from('pelanggan').update({ saldo: saldoBaru }).eq('nama', namaPelanggan);
+
+                // 3. Ubah status deposit
+                await supabase.from('topup_saldo').update({ status: 'Success' }).eq('id', idTopup);
+
+                tampilkanNotifikasi(`Sukses! Saldo ${namaPelanggan} ditambah Rp ${nominal.toLocaleString('id-ID')}`);
+                loadTopUpSaldo();
+            } catch (err) {
+                tampilkanNotifikasi("Gagal memproses approval", "error");
+            }
+        }
+
+        // ================= TAB 4: KELOLA PELANGGAN & HUTANG (BARU) =================
+        let dataPelangganGlobal = [];
+
+        async function loadPelanggan() {
+            const container = document.getElementById('container-pelanggan');
+            const { data, error } = await supabase.from('pelanggan').select('*').order('nama', { ascending: true });
+            
+            if (error) { container.innerHTML = `<div class="text-red-400 text-center text-xs">Gagal memuat data</div>`; return; }
+            if (!data || data.length === 0) { container.innerHTML = `<div class="text-slate-500 text-center text-xs py-6">Data pelanggan kosong</div>`; return; }
+
+            dataPelangganGlobal = data;
+            renderListPelanggan(data);
+        }
+
+        function filterPelanggan() {
+            const keyword = document.getElementById('cari-pelanggan').value.toLowerCase();
+            const dataDisaring = dataPelangganGlobal.filter(p => p.nama.toLowerCase().includes(keyword));
+            renderListPelanggan(dataDisaring);
+        }
+
+        function renderListPelanggan(data) {
+            const container = document.getElementById('container-pelanggan');
+            container.innerHTML = '';
+            
+            data.forEach(item => {
+                const hutangAktif = item.hutang || 0;
+                const borderWarna = hutangAktif > 0 ? (hutangAktif >= 100000 ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-amber-500/50') : 'border-slate-700';
+                
+                container.innerHTML += `
+                    <div class="p-4 rounded-2xl border ${borderWarna} bg-[#1E293B] flex flex-col gap-3 transition-all">
+                        <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center font-bold text-xs">${item.nama.charAt(0).toUpperCase()}</div>
+                                <span class="font-black text-white text-base">${item.nama}</span>
+                            </div>
+                            <div class="text-right flex flex-col">
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Sisa Saldo</span>
+                                <span class="font-bold text-blue-400 text-xs">Rp ${(item.saldo || 0).toLocaleString('id-ID')}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-end">
+                            <div class="w-2/3 pr-3">
+                                <label class="block text-[9px] font-bold text-red-400 uppercase tracking-wider mb-1">Total Hutang Berjalan (Rp)</label>
+                                <input type="number" id="input-hutang-${item.id}" value="${hutangAktif}" class="w-full p-2.5 rounded-lg input-dark text-sm font-black text-red-400">
+                            </div>
+                            <div class="w-1/3">
+                                <button onclick="updateHutang('${item.id}', '${item.nama.replace(/'/g, "\\'")}')" class="w-full bg-slate-700 hover:bg-red-600 text-white py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-wider transition">
+                                    💾 Simpan
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        async function updateHutang(id, nama) {
+            const inputElemen = document.getElementById(`input-hutang-${id}`);
+            const nominalBaru = parseInt(inputElemen.value) || 0;
+
+            try {
+                await supabase.from('pelanggan').update({ hutang: nominalBaru }).eq('id', id);
+                tampilkanNotifikasi(`Hutang ${nama} diubah jadi Rp ${nominalBaru.toLocaleString('id-ID')}`);
+                // Refresh data halus (tidak perlu panggil loadPelanggan() jika realtime aktif, tapi untuk memastikan:)
+                if (!supabase.channel('admin-room').isJoined) loadPelanggan();
+            } catch (err) {
+                tampilkanNotifikasi("Gagal update hutang", "error");
+            }
+        }
+
+    </script>
+</body>
+</html>
