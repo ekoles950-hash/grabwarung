@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Super Admin</title>
+    <title>SUPER ADMIN DASHBOARD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body { background: #0F172A; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
-        .card { background: #1E293B; border: 1px solid #334155; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-        .btn-menu { background: #334155; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 12px; }
-        .btn-save { background: #2563EB; padding: 5px 10px; border-radius: 5px; font-size: 11px; }
-        .hidden { display: none; }
-    </style>
+    <style>body { background-color: #0F172A; color: white; font-family: sans-serif; }</style>
 </head>
-<body>
+<body class="p-4">
 
     <div class="flex gap-2 mb-6">
-        <button onclick="tampilPanel('panel-data')" class="btn-menu">PELANGGAN</button>
-        <button onclick="tampilPanel('panel-topup')" class="btn-menu">TOP UP</button>
+        <button onclick="tampilPanel('panel-data')" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold">PELANGGAN</button>
+        <button onclick="tampilPanel('panel-topup')" class="bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold">TOP UP & PULSA</button>
     </div>
 
-    <div id="panel-data" class="panel">
+    <!-- PANEL PELANGGAN -->
+    <div id="panel-data" class="panel bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
         <h2 class="font-black mb-4">Edit Hutang Manual</h2>
-        <div id="tabel-pelanggan" class="space-y-3">Memuat data...</div>
+        <div id="tabel-pelanggan" class="text-sm space-y-3">Memuat data...</div>
     </div>
 
-    <div id="panel-topup" class="panel hidden">
-        <h2 class="font-black mb-4">Antrean Top Up</h2>
-        <div id="tabel-topup" class="space-y-3">Memuat antrean...</div>
+    <!-- PANEL TOP UP & PULSA (DENGAN TABEL LENGKAP) -->
+    <div id="panel-topup" class="panel hidden bg-[#1E293B] p-5 rounded-2xl border border-slate-700">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-black">Antrean Saldo & Pulsa</h2>
+            <button onclick="muatDataTopUp()" class="bg-slate-600 px-3 py-1 rounded text-[10px] font-bold">REFRESH</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-[10px]">
+                <thead><tr class="text-slate-400 border-b border-slate-700">
+                    <th class="p-2">Waktu</th><th class="p-2">Produk</th><th class="p-2">Tujuan</th><th class="p-2">Aksi</th>
+                </tr></thead>
+                <tbody id="tabel-topup"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -38,47 +45,49 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        // AMBIL DATA PELANGGAN
+        // PELANGGAN
         async function muatDataPelanggan() {
             const { data } = await sb.from('pelanggan').select('*');
             let html = '';
             data.forEach(p => {
-                let h = parseInt(p.hutang || 0);
-                html += `<div class="card">
-                    <div class="mb-2"><strong>${p.nama}</strong><br><small class="text-red-400">Hutang: Rp ${h.toLocaleString()}</small></div>
+                html += `<div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                    <div><div class="font-bold">${p.nama}</div><div class="text-[10px] text-red-400">Hutang: Rp ${parseInt(p.hutang || 0).toLocaleString()}</div></div>
                     <div class="flex gap-2">
-                        <input type="number" id="input-${p.nama}" class="bg-slate-700 w-full p-2 rounded text-xs" placeholder="Input Rupiah...">
-                        <button onclick="updateHutang('${p.nama}')" class="btn-save">SIMPAN</button>
+                        <input type="number" id="input-${p.nama}" class="bg-slate-700 w-16 p-1 rounded text-[10px]" placeholder="Rp...">
+                        <button onclick="updateHutang('${p.nama}')" class="bg-blue-600 px-2 rounded text-[10px]">SAVE</button>
                     </div>
                 </div>`;
             });
             document.getElementById('tabel-pelanggan').innerHTML = html;
         }
 
-        // AMBIL DATA TOP UP (ANTREAN)
+        // TOP UP / PULSA
         async function muatDataTopUp() {
-            const { data } = await sb.from('topup_saldo').select('*').eq('status', 'Pending');
+            const { data } = await sb.from('pesanan_pulsa').select('*').eq('status', 'pending').order('created_at', { ascending: false });
             let html = '';
             if(data && data.length > 0) {
                 data.forEach(t => {
-                    html += `<div class="card flex justify-between items-center">
-                        <div><div class="font-bold text-xs">${t.nama_pelanggan}</div><div class="text-[10px] text-blue-400">Rp ${t.nominal.toLocaleString()}</div></div>
-                        <button onclick="approve('${t.id}')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">APPROVE</button>
-                    </div>`;
+                    const jam = new Date(t.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    html += `<tr class="border-b border-slate-800">
+                        <td class="p-2 text-slate-400">${jam}</td>
+                        <td class="p-2">${t.nama_produk}<br><span class="text-blue-400">${t.sku_code}</span></td>
+                        <td class="p-2">${t.nomor_tujuan}</td>
+                        <td class="p-2"><button onclick="approve('${t.id}')" class="bg-green-600 px-2 py-1 rounded font-bold">✓</button></td>
+                    </tr>`;
                 });
-            } else { html = "Tidak ada antrean."; }
+            } else { html = "<tr><td colspan='4' class='p-4 text-center'>Tidak ada antrean.</td></tr>"; }
             document.getElementById('tabel-topup').innerHTML = html;
         }
 
         async function updateHutang(nama) {
             const val = document.getElementById('input-' + nama).value;
-            if(!val) return alert("Isi angkanya!");
+            if(!val) return alert("Isi angka!");
             await sb.from('pelanggan').update({ hutang: parseInt(val) }).eq('nama', nama);
             alert("Berhasil!"); muatDataPelanggan();
         }
 
         async function approve(id) {
-            await sb.from('topup_saldo').update({ status: 'success' }).eq('id', id);
+            await sb.from('pesanan_pulsa').update({ status: 'success' }).eq('id', id);
             muatDataTopUp();
         }
 
