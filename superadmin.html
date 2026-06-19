@@ -2,44 +2,39 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Warung Kopi Siap Antar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPER ADMIN PANEL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0F172A; color: white; font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="bg-stone-100 pb-24 font-[Plus_Jakarta_Sans]">
+<body class="p-5">
 
-    <!-- HALAMAN LOGIN (LANGSUNG) -->
-    <div id="halaman-login" class="hidden fixed inset-0 bg-[#0F172A] z-[200] flex justify-center items-center p-5">
-        <div class="bg-[#1E293B] w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl text-center">
-            <h1 class="text-2xl font-black text-white mb-6">LOGIN PELANGGAN</h1>
-            <input type="text" id="input-nama-login" class="w-full p-4 rounded-xl bg-slate-800 text-white text-center font-bold mb-5" placeholder="Ketik Nama Anda...">
-            <button onclick="prosesLoginUser()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">MASUK</button>
-        </div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg relative">
-        <div class="bg-[#292524] p-4 text-center border-b-4 border-[#d97706] sticky top-0 z-10">
-            <h1 class="text-lg font-extrabold text-[#f59e0b]">WARUNG KOPI SIAP ANTAR</h1>
-        </div>
-
-        <div class="p-4" id="halaman-beranda">
-            <!-- DASHBOARD RAPI -->
-            <div class="bg-white rounded-2xl p-3 shadow-sm border border-stone-200 mb-4 grid grid-cols-4 gap-2 text-center text-[9px]">
-                <div><span class="block text-stone-400 font-bold uppercase">Akun</span><div id="lbl-nama-beranda" class="font-bold text-stone-800 truncate">-</div></div>
-                <div class="bg-red-50 p-1 rounded-lg"><span class="block text-stone-400 font-bold uppercase">Tagihan</span><div id="lbl-tagihan-beranda" class="text-red-600 font-black">Rp 0</div></div>
-                <div class="bg-amber-50 p-1 rounded-lg"><span class="block text-stone-400 font-bold uppercase">Saldo</span><div id="lbl-saldo-beranda" class="text-amber-600 font-black">Rp 0</div></div>
-                <div class="bg-emerald-50 p-1 rounded-lg"><span class="block text-stone-400 font-bold uppercase">Koin</span><div id="lbl-koin-beranda" class="text-emerald-600 font-black">0</div></div>
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-black mb-5 text-blue-400">Panel Super Admin</h1>
+        
+        <div class="bg-[#1E293B] p-6 rounded-2xl border border-slate-700 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-bold">Data Pelanggan</h2>
+                <button onclick="muatDataAdmin()" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold">RELOAD</button>
             </div>
-            <div id="ruang-menu" class="grid grid-cols-2 gap-4"></div>
-        </div>
-
-        <!-- NAVIGASI -->
-        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1a1f2e] text-white flex justify-around p-4 rounded-t-3xl z-40">
-            <button onclick="bukaBeranda()">🏠 Beranda</button>
-            <button onclick="bukaKeranjang()">🛒 Keranjang</button>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="text-slate-400 border-b border-slate-700">
+                            <th class="py-2">Nama</th>
+                            <th class="py-2">Saldo</th>
+                            <th class="py-2">Hutang</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-admin">
+                        <tr><td colspan="3" class="py-4 text-center">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -47,32 +42,30 @@
         const SUPABASE_URL = 'https://butydxuauhtvwojvpixt.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X';
         const clientDB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let loggedInUser = localStorage.getItem('namaPelangganBasecamp');
 
-        async function muatDataPelanggan(nama) {
-            const { data } = await clientDB.from('pelanggan').select('*').eq('nama', nama).single();
-            if (data) {
-                document.getElementById('lbl-nama-beranda').innerText = data.nama;
-                document.getElementById('lbl-tagihan-beranda').innerText = `Rp ${(data.hutang || 0).toLocaleString()}`;
-                document.getElementById('lbl-saldo-beranda').innerText = `Rp ${(data.saldo || 0).toLocaleString()}`;
-                document.getElementById('lbl-koin-beranda').innerText = data.koin || 0;
+        async function muatDataAdmin() {
+            const tabel = document.getElementById('tabel-admin');
+            tabel.innerHTML = '<tr><td colspan="3" class="py-4 text-center">Memuat data...</td></tr>';
+            
+            try {
+                const { data } = await clientDB.from('pelanggan').select('*');
+                let html = '';
+                data.forEach(p => {
+                    let hutang = p.hutang !== undefined ? p.hutang : (p['Total hutang'] || 0);
+                    html += `<tr class="border-b border-slate-800">
+                        <td class="py-3">${p.nama}</td>
+                        <td class="py-3">Rp ${parseInt(p.saldo).toLocaleString('id-ID')}</td>
+                        <td class="py-3 text-red-400 font-bold">Rp ${parseInt(hutang).toLocaleString('id-ID')}</td>
+                    </tr>`;
+                });
+                tabel.innerHTML = html;
+            } catch (e) {
+                tabel.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-red-500">Gagal ambil data</td></tr>';
             }
         }
 
-        async function prosesLoginUser() {
-            const nama = document.getElementById('input-nama-login').value.trim();
-            if (!nama) return;
-            const { data } = await clientDB.from('pelanggan').select('*').eq('nama', nama).maybeSingle();
-            if (!data) await clientDB.from('pelanggan').insert([{ nama: nama, saldo: 0, koin: 0, hutang: 0 }]);
-            localStorage.setItem('namaPelangganBasecamp', nama);
-            location.reload();
-        }
-
-        if(!loggedInUser) {
-            document.getElementById('halaman-login').classList.remove('hidden');
-        } else {
-            muatDataPelanggan(loggedInUser);
-        }
+        // Langsung jalankan saat dibuka
+        muatDataAdmin();
     </script>
 </body>
 </html>
