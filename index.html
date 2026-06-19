@@ -44,6 +44,7 @@
 </head>
 <body class="bg-stone-100 pb-24">
 
+    <!-- ================= HALAMAN LOGIN AWAL ================= -->
     <div id="halaman-login" class="hidden fixed inset-0 bg-[#0F172A] z-[200] flex justify-center items-center p-5">
         <div class="bg-[#1E293B] w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border border-slate-800 text-center animate-[slideUp_0.3s_ease-out]">
             <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-blue-500/30 text-4xl">☕</div>
@@ -73,8 +74,10 @@
             </a>
         </div>
 
+        <!-- HALAMAN BERANDA -->
         <div class="p-4 bg-stone-50 min-h-screen" id="halaman-beranda">
             
+            <!-- Tampilan Dashboard Akun (Light Mode Beranda) -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-stone-200 mb-4 flex justify-between items-center text-xs">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 bg-amber-500/10 rounded-full flex items-center justify-center text-base">👤</div>
@@ -101,8 +104,10 @@
             <div id="ruang-menu" class="grid grid-cols-2 gap-4"></div>
         </div>
 
+        <!-- HALAMAN TOP UP -->
         <div class="bg-[#0F172A] min-h-screen flex-col items-center p-4 pt-8 pb-24 hidden" id="halaman-topup">
             
+            <!-- Tampilan Dashboard Akun (Dark Mode Top Up) -->
             <div class="w-full bg-[#1E293B] p-4 rounded-2xl border border-slate-800/80 mb-4 flex justify-between items-center text-xs">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 bg-blue-500/10 rounded-full flex items-center justify-center text-base">👤</div>
@@ -192,6 +197,7 @@
             </div>
         </div>
 
+        <!-- TRACKING -->
         <div class="min-h-screen bg-[#131722] text-white p-5 flex-col items-center pt-8 pb-24 hidden" id="halaman-lacak-visual">
             <h3 class="text-[#22c55e] font-extrabold text-xs tracking-[0.2em] mb-3 text-center">LIVE TRACKING</h3>
             <h1 id="teks-status-lacak" class="text-2xl font-extrabold italic text-white mb-10 text-center tracking-wide">MENCARI PESANAN...</h1>
@@ -231,6 +237,7 @@
             </div>
         </div>
 
+        <!-- MODAL CHECKOUT -->
         <div id="modal-checkout" class="hidden fixed inset-0 bg-black/60 z-50 flex justify-center items-end sm:items-center">
             <div class="bg-white w-full max-w-md p-6 rounded-t-2xl sm:rounded-2xl shadow-2xl animate-[slideUp_0.3s_ease-out] max-h-[90vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4 border-b pb-2 shrink-0">
@@ -265,6 +272,7 @@
             </div>
         </div>
 
+        <!-- MODAL PILIHAN METODE PEMBAYARAN BELANJA -->
         <div id="modal-pembayaran-topup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">
             <div class="bg-[#1E293B] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border border-slate-700 text-center animate-[slideUp_0.2s_ease-out]">
                 <h2 class="text-white font-black text-xl mb-4 tracking-wide">PILIH METODE BAYAR</h2>
@@ -272,6 +280,11 @@
                     <p>📦 <span class="font-bold text-white">Produk:</span> <span id="pop-produk" class="text-blue-400 font-bold">-</span></p>
                     <p>💰 <span class="font-bold text-white">Total Tagihan:</span> <span id="pop-harga" class="text-emerald-400 font-bold">-</span></p>
                     <p>💳 <span class="font-bold text-white">Saldo Anda saat ini:</span> <span id="pop-saldo-anda" class="text-yellow-400 font-bold">-</span></p>
+                    
+                    <!-- Notif Hutang Muncul di Sini Jika Ada -->
+                    <p id="pop-hutang-container" class="hidden pt-2 border-t border-slate-700/50 mt-2">
+                        ⚠️ <span class="font-bold text-red-400">Tagihan Belum Lunas:</span> <span id="pop-hutang-anda" class="text-red-400 font-bold">-</span>
+                    </p>
                 </div>
                 <div class="flex flex-col gap-2.5">
                     <button onclick="eksekusiBayarTopUp('SALDO')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg transition">
@@ -285,6 +298,7 @@
             </div>
         </div>
 
+        <!-- REKUEST ISI SALDO MANDIRI -->
         <div id="modal-isi-saldo-user" class="hidden fixed inset-0 bg-black/80 z-[110] flex justify-center items-center p-5 backdrop-blur-sm">
             <div class="bg-[#1E293B] w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl border border-slate-700 animate-[slideUp_0.2s_ease-out]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
@@ -377,6 +391,7 @@
             </div>
         </div>
 
+        <!-- NAVIGASI BAWAH -->
         <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1a1f2e] border-t border-gray-800 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.5)] z-40 flex justify-around items-center px-4 py-3 pb-safe rounded-t-3xl" id="nav-bawah">
             <button onclick="bukaModalLacak()" class="flex flex-col items-center text-gray-400 hover:text-white transition relative">
                 <span class="text-2xl">🔍</span><span class="text-[9px] font-extrabold mt-1 tracking-wide">LACAK</span>
@@ -411,10 +426,11 @@
         const TELE_TOKEN_TOPUP = '8854342299:AAF3dBZvDDItaPS08hhYI_-0Q4ccm-dKgPs';
         const TELE_ID_TOPUP = '8498622906'; 
 
-        // VARIABEL INDENTITAS USER
+        // VARIABEL INDENTITAS USER & HUTANG
         let loggedInUser = localStorage.getItem('namaPelangganBasecamp') || null;
+        let hutangPelanggan = 0; // Tambahan variabel pencatat hutang
 
-        // VARIABEL WARUNG KOPI (Perbaikan Typo Item Key)
+        // VARIABEL WARUNG KOPI
         let keranjang = JSON.parse(localStorage.getItem('keranjangWarungBasecamp')) || [];
         let totalHarga = 0;
         let semuaMenuDB = [];
@@ -426,7 +442,7 @@
         
         // VARIABEL STATUS WARUNG (BUKA/TUTUP & PROMO)
         let isWarungBuka = true;
-        let isHolidayWindow = false; // Ubah ke true jika ingin mengaktifkan harga liburan otomatis (Rp 0)
+        let isHolidayWindow = false;
 
         // ================= LOGIKA LOGIN & AKUN =================
         async function cekLoginUser() {
@@ -460,7 +476,7 @@
                 const { data } = await clientDB.from('pelanggan').select('*').eq('nama', namaInput).maybeSingle();
                 
                 if (!data) {
-                    await clientDB.from('pelanggan').insert([{ nama: namaInput, saldo: 0, koin: 0 }]);
+                    await clientDB.from('pelanggan').insert([{ nama: namaInput, saldo: 0, koin: 0, hutang: 0 }]);
                 }
 
                 localStorage.setItem('namaPelangganBasecamp', namaInput);
@@ -492,6 +508,9 @@
                     document.getElementById('nama_pelanggan_topup').readOnly = true;
                     document.getElementById('nama-pemesan').value = data.nama;
                     document.getElementById('nama-pemesan').readOnly = true;
+
+                    // Mengambil data Hutang yang ditarik dari Supabase
+                    hutangPelanggan = data.hutang || 0; 
                 }
             } catch (e) {}
         }
@@ -701,6 +720,9 @@
                      document.getElementById('lbl-koin-beranda').innerText = payload.new.koin;
                      document.getElementById('lbl-saldo-topup').innerText = `Rp ${payload.new.saldo.toLocaleString('id-ID')}`;
                      document.getElementById('lbl-koin-topup').innerText = payload.new.koin;
+                     
+                     // Tangkap update nilai hutang secara real-time
+                     hutangPelanggan = payload.new.hutang || 0;
                  }
             }).subscribe();
 
@@ -743,7 +765,7 @@
             const dataDisaring = semuaMenuDB.filter(item => kategoriSaatIni === 'Semua' || (item.kategori ? item.kategori.trim() : 'Lainnya') === kategoriSaatIni);
             dataDisaring.forEach(item => {
                 const gambar = item.foto_url && item.foto_url !== "" ? item.foto_url : 'https://placehold.co/400x300?text=No+Image';
-                const hargaFinal = isHolidayWindow ? 0 : item.harga; // Eksekusi dinamis untuk event khusus
+                const hargaFinal = isHolidayWindow ? 0 : item.harga; 
 
                 ruangMenu.innerHTML += `
                     <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden flex flex-col group">
@@ -1008,6 +1030,12 @@
                 return;
             }
 
+            // ================= LOGIKA VALIDASI LIMIT HUTANG =================
+            if (hutangPelanggan >= 100000) {
+                tampilkanNotifikasi("TOP UP GAGAL! Tagihan belum lunas Anda sudah mencapai limit (Rp 100.000). Harap lunasi dulu.", "error");
+                return;
+            }
+
             const namaPelanggan = document.getElementById('nama_pelanggan_topup').value.trim();
             const noHp = document.getElementById('nomor_hp').value.trim();
             
@@ -1023,6 +1051,15 @@
                 document.getElementById('pop-harga').innerText = `Rp ${hargaJualTerpilih.toLocaleString('id-ID')}`;
                 document.getElementById('pop-saldo-anda').innerText = `Rp ${saldoAktif.toLocaleString('id-ID')}`;
 
+                // Menampilkan rincian hutang (jika ada) di Modal Bayar Top Up
+                const hutangContainer = document.getElementById('pop-hutang-container');
+                if (hutangPelanggan > 0) {
+                    hutangContainer.classList.remove('hidden');
+                    document.getElementById('pop-hutang-anda').innerText = `Rp ${hutangPelanggan.toLocaleString('id-ID')}`;
+                } else {
+                    hutangContainer.classList.add('hidden');
+                }
+
                 document.getElementById('modal-pembayaran-topup').classList.remove('hidden');
             } catch (err) {
                 tampilkanNotifikasi("Gagal memuat sistem pembayaran!", "error");
@@ -1034,6 +1071,13 @@
         }
 
         async function eksekusiBayarTopUp(metode) {
+            // Pencegahan ekstra jika sistem tembus
+            if (hutangPelanggan >= 100000) {
+                tampilkanNotifikasi("TOP UP GAGAL! Tagihan belum lunas Anda sudah mencapai limit.", "error");
+                tutupModalBayarTopUp();
+                return;
+            }
+
             tutupModalBayarTopUp();
             
             const namaPelanggan = document.getElementById('nama_pelanggan_topup').value.trim();
