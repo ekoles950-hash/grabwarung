@@ -1090,7 +1090,7 @@
 
         async function eksekusiBayarTopUp(metode) {
             // Pencegahan ekstra jika sistem tembus
-            if (hutangPelanggan >= 100000) {
+            if (hutangPelanggan >= 50000) {
                 tampilkanNotifikasi("TOP UP GAGAL! Tagihan belum lunas Anda sudah mencapai limit.", "error");
                 tutupModalBayarTopUp();
                 return;
